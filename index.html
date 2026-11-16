@@ -8,9 +8,10 @@
   <title>蒜了 · 今天也好好吃饭</title>
   <link rel="icon" href="assets/garlic.png">
   <link rel="stylesheet" href="styles.css">
-  <script src="assets/vendor/xlsx.full.min.js" defer></script>
+  <script src="storage.js" defer></script>
   <script src="icons.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="offline.js" defer></script>
 </head>
 <body>
   <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -30,13 +31,17 @@
       <div class="home-content">
         <div class="recommendation">
           <p class="eyebrow">一日三餐，慢慢挑。</p>
-          <h1>今天吃点什么？</h1>
+          <h1><span class="desktop-recommend-title">今天吃点什么？</span><span class="mobile-recommend-title">今天吃什么？</span></h1>
           <div class="recommended-dish"><span id="recommend-dish-name">加载中…</span><button class="add-recommended" onclick="addRecommendedToCart()" aria-label="将推荐菜加入砂锅">＋</button></div>
           <p id="recommend-ingredients" class="recommend-ingredients"></p>
           <button class="paint-button shuffle" onclick="shakeRecommendation()">换一个 <span aria-hidden="true">↻</span></button>
+          <div class="note-actions">
+            <button type="button" class="note-reject" onclick="shakeRecommendation()" aria-label="换一个推荐菜"><span class="hand-icon icon-error-cross" aria-hidden="true"></span></button>
+            <button type="button" class="note-accept" onclick="addRecommendedToCart()" aria-label="将推荐菜加入砂锅"><img src="assets/icons/recommend-confirm.webp" alt="" width="96" height="96" loading="lazy" decoding="async"></button>
+          </div>
         </div>
         <div class="home-illustration">
-          <button id="home-pot-container" class="home-pot" onclick="transitionToApp()" aria-label="打开菜谱，开始选菜"><img src="assets/penguin-pot.gif" alt="正在煮饭的企鹅砂锅" fetchpriority="high"></button>
+          <button id="home-pot-container" class="home-pot" onclick="transitionToApp()" aria-label="打开菜谱，开始选菜"><img src="assets/penguin-pot.webp" alt="正在煮饭的企鹅砂锅" fetchpriority="high"></button>
           <p class="pot-caption">点点砂锅，翻翻菜谱 <span aria-hidden="true">↗</span></p>
         </div>
       </div>
@@ -73,6 +78,7 @@
           <div class="sidebar-actions">
             <button class="text-button" onclick="scrollToTop()">回到顶部 <span aria-hidden="true">↑</span></button>
             <button class="text-button" onclick="openAddDishModal()">增加菜品 <span aria-hidden="true">＋</span></button>
+            <button class="text-button" onclick="exportRecipesToExcel()" id="export-recipes-btn">导出菜谱 <span aria-hidden="true">↓</span></button>
             <button class="text-button" onclick="toggleEditMode()" id="edit-mode-btn">编辑菜品 <span class="hand-icon icon-pencil" data-hand-icon="pencil" aria-hidden="true"></span></button>
           </div>
         </aside>
@@ -83,7 +89,7 @@
           <div id="cart-items-list" class="cart-items"></div>
           <div class="cart-actions"><button class="text-button danger" onclick="clearCart()">清空</button><button class="paint-button small" onclick="toggleCart()">关闭</button></div>
         </section>
-        <button class="cart-toggle" onclick="toggleCart()" aria-label="查看我的砂锅"><span id="cart-star" class="hidden" aria-hidden="true"></span><span class="pot-image"><img src="assets/pot.png" alt="企鹅砂锅"></span><span id="cart-badge" class="cart-badge hidden">0</span><span class="cart-label">我的砂锅</span></button>
+        <button class="cart-toggle" onclick="toggleCart()" aria-label="查看我的砂锅"><span id="cart-star" class="hidden" aria-hidden="true"></span><span class="pot-image"><img src="assets/pot.webp" alt="企鹅砂锅"></span><span id="cart-badge" class="cart-badge hidden">0</span><span class="cart-label">我的砂锅</span></button>
       </div>
     </section>
   </main>

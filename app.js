@@ -129,12 +129,47 @@
           garnish
         };
 
-        recipes.push(newDish);
-        localStorage.setItem('garlic_recipes', JSON.stringify(recipes));
+        const nextRecipes = [...recipes, newDish];
+        if (!saveRecipeData(nextRecipes)) return;
+        recipes = nextRecipes;
         closeAddDishModal();
         
         showToast("新菜品添加成功！", "success");
         renderApp();
+      }
+
+      // Export the complete current recipe collection, independent of active filters.
+      async function exportRecipesToExcel() {
+        const button = document.getElementById('export-recipes-btn');
+        if (button.disabled) return;
+        if (!recipes.length) {
+          showToast('当前没有可导出的菜谱。', 'info');
+          return;
+        }
+        const headers = ['菜名', '食材', '类别', '种类', '烹饪方式', '难易程度', '口味', '配料'];
+        const fields = ['name', 'ingredients', 'category', 'type', 'method', 'difficulty', 'flavor', 'garnish'];
+        const rows = recipes.map(recipe => fields.map(field => String(recipe[field] ?? '')));
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
+        button.textContent = '正在导出…';
+        try {
+          const workbookLibrary = await loadWorkbookParser();
+          const sheet = workbookLibrary.utils.aoa_to_sheet([headers, ...rows]);
+          sheet['!cols'] = [28, 28, 10, 12, 14, 14, 12, 28].map(wch => ({wch}));
+          sheet['!autofilter'] = {ref: sheet['!ref']};
+          const workbook = workbookLibrary.utils.book_new();
+          workbookLibrary.utils.book_append_sheet(workbook, sheet, '当前菜谱');
+          const now = new Date();
+          const date = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
+          workbookLibrary.writeFile(workbook, `蒜了菜谱-${date}.xlsx`, {bookType: 'xlsx', compression: true});
+        } catch (error) {
+          console.error(error);
+          showToast('导出 Excel 失败，请重试；首次使用请先联网。', 'error');
+        } finally {
+          button.disabled = false;
+          button.removeAttribute('aria-busy');
+          button.innerHTML = '导出菜谱 <span aria-hidden="true">↓</span>';
+        }
       }
 
       // Download CSV Template & Current Recipes
@@ -184,8 +219,9 @@
       // Confirm deletion of a dish from recipes list
       function confirmDeleteDish(recipeName) {
         showConfirm(`确定要删除“${recipeName}”这道菜吗？`, "🗑️", () => {
-          recipes = recipes.filter(r => r.name !== recipeName);
-          localStorage.setItem('garlic_recipes', JSON.stringify(recipes));
+          const nextRecipes = recipes.filter(r => r.name !== recipeName);
+          if (!saveRecipeData(nextRecipes)) return;
+          recipes = nextRecipes;
           showToast(`已成功删除 ${recipeName}！`, "success");
           
           // Re-roll recommendation if the recommended dish was deleted
@@ -255,7 +291,7 @@
 
       // Load database from localStorage or default
       function initDatabase() {
-        const stored = localStorage.getItem('garlic_recipes');
+        const stored = readBrowserValue('garlic_recipes');
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
@@ -263,20 +299,24 @@
               recipes = parsed.filter(r => r && r.name && typeof r.name === 'string' && !r.name.trim().startsWith('='));
             } else {
               recipes = [...defaultRecipes];
+              showToast('⚠️ 已保存的菜谱格式异常，原数据未被覆盖，请从备份重新导入。', 'error');
             }
           } catch(e) {
             recipes = [...defaultRecipes];
+            showToast('⚠️ 无法读取已保存的菜谱，原数据未被覆盖，请从备份重新导入。', 'error');
           }
         } else {
           recipes = [...defaultRecipes];
-          localStorage.setItem('garlic_recipes', JSON.stringify(recipes));
+          saveRecipeData(recipes, false);
         }
+        warmRecipeFonts(recipes);
       }
 
       // Restore to Default Recipes
       function restoreDefaults() {
-        recipes = [...defaultRecipes];
-        localStorage.setItem('garlic_recipes', JSON.stringify(recipes));
+        const nextRecipes = [...defaultRecipes];
+        if (!saveRecipeData(nextRecipes)) return;
+        recipes = nextRecipes;
         showToast("已恢复默认33道菜谱！", "success");
         shakeRecommendation();
         renderApp();
@@ -287,13 +327,19 @@
         document.getElementById('file-uploader').click();
       }
 
-      function handleFileUpload(event) {
+      async function handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
+        event.target.value = '';
 
         const fileName = file.name.toLowerCase();
         
         if (fileName.endsWith('.xlsx')) {
+          try { await loadWorkbookParser(); }
+          catch (error) {
+            showToast('⚠️ 暂时无法读取 Excel，请联网后重试；也可以先上传 CSV。', 'error');
+            return;
+          }
           const reader = new FileReader();
           reader.onload = function(e) {
             try {
@@ -416,8 +462,8 @@
         }
 
         if (importedRecipes.length > 0) {
+          if (!saveRecipeData(importedRecipes)) return;
           recipes = importedRecipes;
-          localStorage.setItem('garlic_recipes', JSON.stringify(recipes));
           showToast(`🎉 成功导入 ${importedRecipes.length} 条菜谱并自动清洗公式数据！`, "success");
           shakeRecommendation();
           renderApp();
@@ -648,13 +694,18 @@
 
 
       function getCart() {
-        const stored = localStorage.getItem('garlic_cart');
-        return stored ? JSON.parse(stored) : [];
+        const stored = readBrowserValue('garlic_cart');
+        if (!stored) return [];
+        try {
+          const parsed = JSON.parse(stored);
+          return Array.isArray(parsed) ? parsed.filter(item => typeof item === 'string') : [];
+        } catch (error) { return []; }
       }
 
       function saveCart(cart) {
-        localStorage.setItem('garlic_cart', JSON.stringify(cart));
+        if (!saveCartData(cart)) return false;
         renderCartUI();
+        return true;
       }
 
       function addToCart(dishName) {
@@ -665,7 +716,7 @@
         }
         
         cart.push(dishName);
-        saveCart(cart);
+        if (!saveCart(cart)) return;
         
         // Trigger unread cart stars state
         hasUnreadCartItems = true;
@@ -677,13 +728,13 @@
       function removeFromCart(dishName) {
         let cart = getCart();
         cart = cart.filter(item => item !== dishName);
-        saveCart(cart);
+        if (!saveCart(cart)) return;
         showToast(`🗑️ 已从砂锅取出 “${dishName}”`);
       }
 
       function clearCart() {
         showConfirm("确定要清空砂锅里的所有菜谱吗？", "🗑️", () => {
-          saveCart([]);
+          if (!saveCart([])) return;
           showToast("🍲 砂锅已清空！");
           document.getElementById('cart-popup').classList.add('hidden');
         });

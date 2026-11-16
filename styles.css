@@ -16,7 +16,7 @@
 @media(max-width:600px){.clipboard{aspect-ratio:auto;height:260px}.clipboard-menu{top:19%;bottom:9%;left:11%;right:10%}.dimension-btn{min-height:44px}.pot-caption{margin-top:8px}}
 @media(max-width:360px){.clipboard{height:250px}}
 /* Nine-slice the original drawing: preserve the clip, corners and paper edge. */
-.clipboard-art{display:block;border:1px solid transparent;border-image-source:url('assets/clipboard.png');border-image-slice:850 200 400 200 fill;border-image-width:22.385% 9.363% 10.535% 9.363%;border-image-repeat:stretch}
+.clipboard-art{display:block;border:1px solid transparent;border-image-source:url('assets/clipboard.webp');border-image-slice:382 90 180 90 fill;border-image-width:22.385% 9.363% 10.535% 9.363%;border-image-repeat:stretch}
 .clipboard-art>*{display:none}
 @media(max-width:600px){.clipboard-art{border-image-width:41px 9.64px 19.3px 9.64px}}
 @media(max-width:360px){.clipboard-art{border-image-width:36.6px 8.61px 17.2px 8.61px}}
@@ -37,6 +37,7 @@
 .confirm-emoji>.hand-icon{width:56px;height:56px}
 .toast>.hand-icon{width:31px;height:31px}
 .sidebar-actions .hand-icon{width:24px;height:24px}
+@media(max-width:600px) and (max-height:760px){.right-sidebar{margin-bottom:calc(130px + env(safe-area-inset-bottom));padding-bottom:12px}}
 @media(max-width:600px){.category-icon .hand-icon{width:40px;height:40px}.menu-emoji.hand-icon{width:23px;height:23px}.tag-emoji>.hand-icon{width:25px;height:25px}.tag-emoji>.icon-star{width:13px;height:13px}.dish-stars>.hand-icon{width:14px;height:14px}.sidebar-actions .hand-icon{width:21px;height:21px}.toast>.hand-icon{width:28px;height:28px}}
 @media(max-width:360px){.category-icon .hand-icon{width:37px;height:37px}.menu-emoji.hand-icon{width:21px;height:21px}.dimension-btn>span{gap:1px}}
 /* Trial copy: icon-only categories, with labels on the selected sub-filter. */
@@ -71,3 +72,59 @@
 @media(max-width:360px){.tag-list .tag-btn{--tag-rest-height:48px;--tag-open-height:72px;--tag-art-size:38px}}
 @media(prefers-reduced-motion:reduce){.tag-list .tag-btn,.tag-list .tag-label,.tag-list .tag-emoji{transition:none!important;animation:none!important}}
 .tag-list{overflow-x:hidden}
+
+.mobile-recommend-title,.note-actions{display:none}
+/* Mobile home: one width-scaled kitchen scene; extra height uses its flat edge colors. */
+@media(max-width:600px){
+  #home-screen{
+    --kitchen-height:max(100svh,165vw);
+    --kitchen-art-height:209.9074vw;
+    --kitchen-top:clamp(-18vw,calc((var(--kitchen-height) - var(--kitchen-art-height)) * .45),12vw);
+    position:relative;isolation:isolate;display:block;max-width:none;margin:0;padding:0;
+    height:var(--kitchen-height);min-height:100svh;overflow:hidden;
+    background:linear-gradient(to bottom,#eff0e2 0%,#eff0e2 45%,#d3d4aa 45%,#d3d4aa 100%);
+  }
+  #home-screen:before{
+    content:"";position:absolute;left:0;right:0;top:var(--kitchen-top);
+    height:var(--kitchen-art-height);z-index:-1;pointer-events:none;
+    background:url('assets/kitchen-mobile.webp') center top/100% 100% no-repeat;
+  }
+  #home-screen .home-header{position:absolute;left:5.55%;right:5.55%;top:max(18px,env(safe-area-inset-top));z-index:3;gap:8px}
+  #home-screen .data-actions{gap:2px}
+  #home-screen .data-actions .paint-button.small{padding:6px;min-height:44px;background:transparent;color:#656954;font-weight:500}
+  #home-screen .data-actions .paint-button.small:before{display:none}
+  #home-screen .home-content{position:static;display:block;min-height:0;padding:0;margin:0}
+  #home-screen .recommendation{
+    position:absolute;left:25.9259%;top:calc(var(--kitchen-top) + 38.7037vw);
+    width:47.5%;min-height:40.6481vw;padding:clamp(11px,3.2vw,18px) clamp(11px,3.2vw,18px) 8px;
+    display:grid;grid-template-rows:auto minmax(40px,1fr) auto;gap:5px;text-align:center;z-index:2;
+    background:url('assets/recommend-note.webp') center/100% 100% no-repeat;
+  }
+  #home-screen .recommendation>.eyebrow,#home-screen .recommend-ingredients{display:none}
+  #home-screen .recommendation h1{margin:0;font-size:clamp(12px,3.6vw,16px);font-weight:500;line-height:1.4;letter-spacing:0}
+  #home-screen .recommended-dish{width:100%;max-width:100%;min-height:40px;margin:0;gap:3px;align-items:center}
+  #home-screen .recommended-dish:after{display:none}
+  #home-screen #recommend-dish-name{flex:1;min-width:0;font-size:clamp(16px,5vw,23px);line-height:1.35;text-align:center;overflow-wrap:anywhere;text-wrap:balance}
+  #home-screen .add-recommended{width:32px;min-width:32px;height:40px;min-height:40px;flex-shrink:0;background:transparent;border-radius:0;font-size:28px}
+  #home-screen .shuffle{justify-self:end;align-self:end;margin:0;padding:2px 0 2px 6px;min-height:32px;gap:8px;font-size:clamp(12px,3.5vw,16px);font-weight:500}
+  #home-screen .shuffle:before{display:none}
+  #home-screen .shuffle span{font-size:20px}
+  #home-screen .home-illustration{position:absolute;left:5%;top:calc(var(--kitchen-top) + 91.3vw);width:90%;display:block;z-index:2}
+  #home-screen .home-pot{width:100%;max-width:none;aspect-ratio:1080/996;height:auto;margin:0}
+  #home-screen .home-pot img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:100%;object-fit:contain}
+  #home-screen .home-pot:hover{transform:none}
+  #home-screen .pot-caption,#home-screen .home-footer{display:none}
+  /* The mobile sticky note has one centered name and two image-only actions. */
+  #home-screen .desktop-recommend-title,#home-screen .add-recommended,#home-screen .shuffle{display:none}
+  #home-screen .mobile-recommend-title{display:inline}
+  #home-screen .recommendation h1{color:#79693e}
+  #home-screen .recommended-dish{justify-content:center}
+  #home-screen #recommend-dish-name{font-size:clamp(18px,6vw,26px);color:var(--ink)}
+  #home-screen .note-actions{display:grid;grid-template-columns:1fr 1fr;align-items:center;width:100%;min-height:44px}
+  #home-screen .note-actions button{display:flex;align-items:center;justify-content:center;justify-self:center;width:44px;height:44px;padding:0;background:transparent}
+  #home-screen .note-reject .hand-icon{width:36px;height:36px}
+  #home-screen .note-accept img{width:44px;height:44px;object-fit:contain}
+}
+/* This only appears when a complete new version is waiting; existing user data is kept. */
+.site-update-notice{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:16px;max-width:calc(100% - 28px);padding:10px 14px;background:#fcfcf5;color:#535840;border-radius:15px 12px 17px 13px;box-shadow:0 4px 20px #434b3020;font-size:12px;white-space:nowrap}
+.site-update-notice button{min-height:36px;padding:6px 12px;background:#d5d5ab;border-radius:13px;font-size:12px}
