@@ -168,7 +168,26 @@
           workbookLibrary.utils.book_append_sheet(workbook, sheet, '当前菜谱');
           const now = new Date();
           const date = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
-          workbookLibrary.writeFile(workbook, `蒜了菜谱-${date}.xlsx`, {bookType: 'xlsx', compression: true});
+          const filename = `蒜了菜谱-${date}.xlsx`;
+          const mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+          const bytes = workbookLibrary.write(workbook, {bookType: 'xlsx', type: 'array', compression: true});
+          // Some Android download managers sniff a generic binary Blob as ZIP.
+          // Supply the Excel MIME type and filename on both the File and the link.
+          const file = new File([bytes], filename, {type: mimeType});
+          const url = URL.createObjectURL(file);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          link.type = mimeType;
+          link.hidden = true;
+          try {
+            document.body.appendChild(link);
+            link.click();
+          } finally {
+            link.remove();
+            // Leave time for the mobile download manager to consume the URL.
+            setTimeout(() => URL.revokeObjectURL(url), 60000);
+          }
         } catch (error) {
           console.error(error);
           showToast('导出 Excel 失败，请重试；首次使用请先联网。', 'error');
