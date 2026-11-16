@@ -23,7 +23,7 @@
       <header class="home-header">
         <div class="brand"><img src="assets/garlic.png" alt="" width="36" height="36"><span>蒜了<span class="brand-dot">。</span></span></div>
         <div class="data-actions">
-          <button class="text-button" onclick="downloadCSVTemplate()"><span aria-hidden="true">↓</span> 下载模板</button>
+          <button class="text-button" id="download-recipes-btn" data-recipe-export onclick="exportRecipesToExcel(this, true)"><span aria-hidden="true">↓</span> 下载模板</button>
           <button class="paint-button small" onclick="triggerFileSelect()">更新数据 <span aria-hidden="true">↗</span></button>
           <input type="file" id="file-uploader" accept=".xlsx,.csv" class="hidden" onchange="handleFileUpload(event)" aria-label="上传菜谱数据">
         </div>
@@ -78,7 +78,7 @@
           <div class="sidebar-actions">
             <button class="text-button" onclick="scrollToTop()">回到顶部 <span aria-hidden="true">↑</span></button>
             <button class="text-button" onclick="openAddDishModal()">增加菜品 <span aria-hidden="true">＋</span></button>
-            <button class="text-button" onclick="exportRecipesToExcel()" id="export-recipes-btn">导出菜谱 <span aria-hidden="true">↓</span></button>
+            <button class="text-button" onclick="exportRecipesToExcel(this)" id="export-recipes-btn" data-recipe-export>导出菜谱 <span aria-hidden="true">↓</span></button>
             <button class="text-button" onclick="toggleEditMode()" id="edit-mode-btn">编辑菜品 <span class="hand-icon icon-pencil" data-hand-icon="pencil" aria-hidden="true"></span></button>
           </div>
         </aside>

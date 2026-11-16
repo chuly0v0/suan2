@@ -47,6 +47,7 @@
       let isEditMode = false;
       let recipePageTurn = null;
       const cartFeedbackTimers = new WeakMap();
+      let recipeExportInProgress = false;
 
       // Toggle edit mode
       function toggleEditMode() {
@@ -141,18 +142,22 @@
       }
 
       // Export the complete current recipe collection, independent of active filters.
-      async function exportRecipesToExcel() {
-        const button = document.getElementById('export-recipes-btn');
-        if (button.disabled) return;
-        if (!recipes.length) {
+      async function exportRecipesToExcel(button = document.getElementById('export-recipes-btn'), allowEmpty = false) {
+        if (recipeExportInProgress || button.disabled) return;
+        if (!recipes.length && !allowEmpty) {
           showToast('当前没有可导出的菜谱。', 'info');
           return;
         }
         const headers = ['菜名', '食材', '类别', '种类', '烹饪方式', '难易程度', '口味', '配料'];
         const fields = ['name', 'ingredients', 'category', 'type', 'method', 'difficulty', 'flavor', 'garnish'];
         const rows = recipes.map(recipe => fields.map(field => String(recipe[field] ?? '')));
-        button.disabled = true;
-        button.setAttribute('aria-busy', 'true');
+        const exportButtons = [...document.querySelectorAll('[data-recipe-export]')];
+        const originalLabel = button.innerHTML;
+        recipeExportInProgress = true;
+        exportButtons.forEach(item => {
+          item.disabled = true;
+          item.setAttribute('aria-busy', 'true');
+        });
         button.textContent = '正在导出…';
         try {
           const workbookLibrary = await loadWorkbookParser();
@@ -168,53 +173,12 @@
           console.error(error);
           showToast('导出 Excel 失败，请重试；首次使用请先联网。', 'error');
         } finally {
-          button.disabled = false;
-          button.removeAttribute('aria-busy');
-          button.innerHTML = '导出菜谱 <span aria-hidden="true">↓</span>';
-        }
-      }
-
-      // Download CSV Template & Current Recipes
-      function downloadCSVTemplate() {
-        const headers = ["菜名", "食材", "类别", "种类", "烹饪方式", "难易程度", "口味", "配料"];
-        let csvContent = "\ufeff"; // UTF-8 BOM for Excel Chinese compatibility
-        csvContent += headers.join(",") + "\r\n";
-        
-        recipes.forEach(recipe => {
-          const row = [
-            recipe.name || "",
-            recipe.ingredients || "",
-            recipe.category || "",
-            recipe.type || "",
-            recipe.method || "",
-            recipe.difficulty || "",
-            recipe.flavor || "",
-            recipe.garnish || ""
-          ];
-          const escapedRow = row.map(val => {
-            let str = String(val).replace(/"/g, '""');
-            if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
-              str = `"${str}"`;
-            }
-            return str;
+          exportButtons.forEach(item => {
+            item.disabled = false;
+            item.removeAttribute('aria-busy');
           });
-          csvContent += escapedRow.join(",") + "\r\n";
-        });
-
-        try {
-          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.setAttribute("href", url);
-          link.setAttribute("download", "garlic_recipes.csv");
-          link.style.visibility = 'hidden';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          showToast("📥 菜谱数据导出成功！", "success");
-        } catch (e) {
-          console.error(e);
-          showToast("❌ 导出 CSV 失败！", "error");
+          button.innerHTML = originalLabel;
+          recipeExportInProgress = false;
         }
       }
 
