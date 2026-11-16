@@ -46,6 +46,7 @@
       let currentRecommendedDish = null;
       let isEditMode = false;
       let recipePageTurn = null;
+      const cartFeedbackTimers = new WeakMap();
 
       // Toggle edit mode
       function toggleEditMode() {
@@ -665,6 +666,7 @@
         for (const recipe of filtered) {
           const row = document.createElement('article');
           row.className = 'recipe-row';
+          row.dataset.recipeName = recipe.name;
           const name = document.createElement('h2');
           name.className = 'dish-name';
           name.textContent = recipe.name;
@@ -726,8 +728,36 @@
         // Trigger unread cart stars state
         hasUnreadCartItems = true;
         document.getElementById('cart-star').classList.remove('hidden');
+        playCartAddFeedback(dishName);
         
         showToast(`🎉 成功添加 “${dishName}”！`, "success");
+      }
+
+      function replayCartFeedback(element, className, duration) {
+        if (!element) return;
+        clearTimeout(cartFeedbackTimers.get(element));
+        if (element.classList.contains(className)) {
+          element.classList.remove(className);
+          void element.offsetWidth;
+        }
+        element.classList.add(className);
+        cartFeedbackTimers.set(element, setTimeout(() => {
+          element.classList.remove(className);
+          cartFeedbackTimers.delete(element);
+        }, duration));
+      }
+
+      function playCartAddFeedback(dishName) {
+        const row = [...document.querySelectorAll('.recipe-row')].find(item => item.dataset.recipeName === dishName);
+        replayCartFeedback(row, 'recipe-added', 450);
+        const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) return;
+        replayCartFeedback(row?.querySelector('.add-btn'), 'recipe-add-pressed', 250);
+        replayCartFeedback(document.getElementById('cart-badge'), 'cart-count-added', 300);
+        // Haptics are supplementary: unsupported or blocked vibration never affects saving.
+        if (matchMedia('(any-pointer: coarse)').matches && typeof navigator.vibrate === 'function') {
+          try { navigator.vibrate(15); } catch {}
+        }
       }
 
       function removeFromCart(dishName) {
