@@ -104,7 +104,7 @@
     "types": [
       "蔬菜"
     ],
-    "method": "上汤",
+    "method": "其它",
     "appetizing": false,
     "convenience": "2"
   },
@@ -727,7 +727,7 @@
           if (modern) {
             const groups = recipeSchema.groupNames(source.types);
             if (!groups.length || groups.some(g=>!recipeSchema.groups.includes(g))) { fail('食材分类需使用模板中的分类'); return; }
-            if (!recipeSchema.methods.includes(source.method) && source.method!=='其他') { fail('烹饪方式不在模板选项内'); return; }
+            if (!recipeSchema.methods.includes(source.method) && !['其他','上汤'].includes(source.method)) { fail('烹饪方式不在模板选项内'); return; }
             if (!['是','否','true','false','1','0'].includes(source.appetizing)) { fail('开胃请填是或否'); return; }
             if (!['1','2','3'].includes(source.convenience)) { fail('方便程度请填1、2或3'); return; }
             source.types = groups;
@@ -876,7 +876,7 @@
         const leftSidebar = document.getElementById('left-sidebar-tags');
         let tags = [];
         if (activeDimension === '烹饪方式') {
-          tags = [['炒','🔥'],['蒸','💧'],['煎','🍳'],['焗','🥘'],['炖','🍲'],['白灼','🥗'],['上汤','🥣'],['其它','🧄']].map(([text,emoji]) => ({text,emoji,value:text}));
+          tags = [['炒','🔥'],['蒸','💧'],['煎','🍳'],['焗','🥘'],['炖','🍲'],['白灼','🥗'],['其它','🧄']].map(([text,emoji]) => ({text,emoji,value:text}));
         } else if (activeDimension === '方便程度') {
           tags = [3,2,1].map(n => ({text:n+'星',value:String(n),emoji:'☆'.repeat(n)}));
         }

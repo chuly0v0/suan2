@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>更新蒜了</title>
+<style>body{margin:0;background:#f1f1e3;color:#35382d;font:16px/1.8 "Microsoft YaHei",sans-serif;display:grid;place-items:center;min-height:100svh}main{max-width:460px;margin:24px;padding:28px;background:#fafaf2;border-radius:24px}h1{font-size:24px}button{font:inherit;background:#d5d5ab;border:0;border-radius:16px;padding:12px 22px;cursor:pointer}button:disabled{opacity:.6}#status{color:#656954;min-height:3.6em}a{color:#656954}</style></head>
+<body><main><h1>更新蒜了</h1><p>刷新网页资源，保留浏览器里的菜谱和砂锅。其他已打开页面不会被强制刷新。</p><button id="update" type="button">更新并打开菜谱</button><p id="status" role="status">请保持联网，点击按钮检查最新版。</p><a href="./">返回菜谱</a></main>
+<script>
+const button=document.getElementById('update'),status=document.getElementById('status');
+function waitInstalled(worker){return new Promise((resolve,reject)=>{
+ const timer=setTimeout(()=>{worker.removeEventListener('statechange',change);reject(Error('timeout'));},60000);
+ function change(){if(worker.state==='installed'){clearTimeout(timer);worker.removeEventListener('statechange',change);resolve();}else if(worker.state==='redundant'){clearTimeout(timer);worker.removeEventListener('statechange',change);reject(Error('download'));}}
+ worker.addEventListener('statechange',change);change();
+});}
+button.onclick=async()=>{
+ button.disabled=true;status.textContent='正在检查和准备新版，请稍等…';
+ try{
+  if(!('serviceWorker' in navigator))throw Error('unsupported');
+  const registration=await navigator.serviceWorker.register(new URL('sw.js',location.href),{updateViaCache:'none'});
+  await registration.update();
+  if(registration.installing)await waitInstalled(registration.installing);
+  const waiting=registration.waiting;
+  if(waiting){
+   await new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',change);reject(Error('timeout'));},30000);
+    function change(){clearTimeout(timer);navigator.serviceWorker.removeEventListener('controllerchange',change);resolve();}
+    navigator.serviceWorker.addEventListener('controllerchange',change);
+    waiting.postMessage({type:'APPLY_UPDATE'});
+   });
+  }
+  location.replace(new URL('./',location.href));
+ }catch(error){button.disabled=false;status.textContent='暂时没有更新成功，请确认联网后重试。此操作没有清除菜谱和砂锅。';}
+};
+if(new URL(location.href).searchParams.get('apply')==='1')button.click();
+</script></body></html>

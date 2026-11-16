@@ -6,9 +6,14 @@
   let notice;
   let updateButton;
   let updateLabel;
+  let hadController = !!navigator.serviceWorker.controller;
 
   function showUpdate(worker) {
-    if (!worker || notice) return;
+    if (notice) {
+      if (updateLabel) updateLabel.textContent = '有新版可用';
+      if (updateButton) { updateButton.disabled = false; updateButton.textContent = '更新页面'; }
+      return;
+    }
     notice = document.createElement('div');
     notice.className = 'site-update-notice';
     notice.setAttribute('role', 'status');
@@ -16,21 +21,30 @@
     const button = document.createElement('button'); button.type = 'button'; button.textContent = '更新页面';
     updateButton = button; updateLabel = label;
     button.onclick = () => {
-      reloadRequested = true;
       button.disabled = true; button.textContent = '正在更新';
-      worker.postMessage({type:'APPLY_UPDATE'});
+      // Leave the current document before activation so its pending requests or
+      // stale worker references cannot hold the update open.
+      location.assign(new URL('update.html?apply=1', document.baseURI));
     };
     notice.append(label, button); document.body.append(notice);
   }
 
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (reloadRequested) location.reload();
-    else recipeFontWarmPromise.then(()=>cacheLoadedRecipeFonts());
+    else {
+      recipeFontWarmPromise.then(()=>cacheLoadedRecipeFonts());
+      if (hadController) {
+        showUpdate(null);
+        if (updateLabel) updateLabel.textContent = '有新版可用';
+        if (updateButton) { updateButton.disabled = false; updateButton.textContent = '更新页面'; }
+      }
+      hadController = true;
+    }
   });
   navigator.serviceWorker.addEventListener('message', event => {
     if (event.data?.type !== 'UPDATE_HAS_OTHER_TABS') return;
     reloadRequested = false;
-    if (updateLabel) updateLabel.textContent = '请先只保留当前蒜了页面';
+    if (updateLabel) updateLabel.textContent = '有新版可用';
     if (updateButton) {updateButton.disabled = false;updateButton.textContent = '更新页面';}
   });
 
