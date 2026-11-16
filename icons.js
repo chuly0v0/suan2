@@ -1,7 +1,7 @@
 // Shared semantic mapping: original Emoji tokens are never rendered as system artwork.
 const handIconByEmoji = Object.freeze({
   '🐥':'chicken', '🐷':'pig', '🐂':'cow', '🐟':'fish', '🦆':'duck',
-  '🥬':'cabbage', '🏺':'mushroom', '🔥':'fire', '💧':'water-drop',
+  '🥚':'egg-beans', '🧄':'garlic-bulb', '🥬':'cabbage', '🏺':'mushroom', '🔥':'fire', '💧':'water-drop',
   '🍳':'frying-pan', '🥘':'shallow-pan', '🍲':'cooking-pot',
   '🥗':'blanched-vegetables', '🥣':'soup-bowl', '⭐':'star',
   '🤤':'tomato', '👍':'stopwatch', '✅':'check', '⚙':'pencil',

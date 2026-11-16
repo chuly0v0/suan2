@@ -18,7 +18,7 @@ async function cacheLoadedRecipeFonts() {
 
 function warmRecipeFonts(data) {
   if (!document.fonts) return;
-  const text = [...new Set(data.flatMap(item=>['name','ingredients','category','type','method','difficulty','flavor','garnish'].map(key=>String(item[key]||''))).join(''))].join('');
+  const text = [...new Set(data.flatMap(item=>['name','ingredients','types','method','convenience'].map(key=>String(item[key]||''))).join(''))].join('');
   if (!text) return;
   recipeFontWarmPromise = Promise.all([
     document.fonts.load('500 16px "Suan Sans"',text),

@@ -1,46 +1,363 @@
 // Existing recipe operations retained from the online snapshot.
 
-      // 33 Standard recipes from spreadsheet
+      // Canonical six-column recipes, migrated from the original 33 rows.
       const defaultRecipes = [
-        { name: "菠萝炒吊龙", ingredients: "吊龙", category: "荤", type: "牛", method: "炒", difficulty: "2", flavor: "开胃", garnish: "菠萝" },
-        { name: "香菜炒吊龙", ingredients: "吊龙", category: "荤", type: "牛", method: "炒", difficulty: "2", flavor: "开胃", garnish: "香菜" },
-        { name: "蒜心炒吊龙", ingredients: "吊龙", category: "荤", type: "牛", method: "炒", difficulty: "2", flavor: "适中", garnish: "蒜心" },
-        { name: "虫草花蒸吊龙", ingredients: "吊龙", category: "荤", type: "牛", method: "蒸", difficulty: "1", flavor: "清淡", garnish: "虫草花" },
-        { name: "藠头炒鸡胸肉", ingredients: "鸡胸肉", category: "荤", type: "鸡", method: "炒", difficulty: "2", flavor: "开胃", garnish: "藠头" },
-        { name: "小米辣炒鸡胸肉", ingredients: "鸡胸肉", category: "荤", type: "鸡", method: "炒", difficulty: "2", flavor: "开胃", garnish: "小米辣" },
-        { name: "胡萝卜炒鸡胸肉", ingredients: "鸡胸肉", category: "荤", type: "鸡", method: "炒", difficulty: "2", flavor: "适中", garnish: "胡萝卜" },
-        { name: "奥尔良煎鸡胸肉", ingredients: "鸡胸肉", category: "荤", type: "鸡", method: "煎", difficulty: "3", flavor: "油腻", garnish: "奥尔良" },
-        { name: "炒豆苗", ingredients: "豆苗", category: "素", type: "蔬菜", method: "炒", difficulty: "1", flavor: "清淡", garnish: "" },
-        { name: "上汤豆苗", ingredients: "豆苗", category: "素", type: "蔬菜", method: "上汤", difficulty: "2", flavor: "清淡", garnish: "" },
-        { name: "五花肉炒菜心干", ingredients: "菜心干", category: "素", type: "干货", method: "炒", difficulty: "2", flavor: "开胃", garnish: "五花肉" },
-        { name: "酸梅酱炖鸭翅", ingredients: "鸭翅", category: "荤", type: "鸭", method: "炖", difficulty: "3", flavor: "开胃", garnish: "酸梅酱" },
-        { name: "菠萝炒鸭", ingredients: "鸭", category: "荤", type: "鸭", method: "炒", difficulty: "3", flavor: "开胃", garnish: "菠萝" },
-        { name: "藠头炒鸭", ingredients: "鸭", category: "荤", type: "鸭", method: "炒", difficulty: "3", flavor: "开胃", garnish: "藠头" },
-        { name: "胡萝卜炖排骨", ingredients: "排骨", category: "荤", type: "猪", method: "炖", difficulty: "3", flavor: "浓烈", garnish: "胡萝卜" },
-        { name: "洋葱煎排骨", ingredients: "排骨", category: "荤", type: "猪", method: "煎", difficulty: "3", flavor: "油腻", garnish: "洋葱" },
-        { name: "蒸鸡", ingredients: "鸡", category: "荤", type: "鸡", method: "蒸", difficulty: "2", flavor: "清淡", garnish: "" },
-        { name: "虫草花蒸鸡", ingredients: "鸡", category: "荤", type: "鸡", method: "蒸", difficulty: "2", flavor: "清淡", garnish: "虫草花" },
-        { name: "五花肉炒荞苗", ingredients: "荞苗", category: "荤素", type: "蔬菜", method: "炒", difficulty: "2", flavor: "开胃", garnish: "五花肉" },
-        { name: "荞苗炒五花肉", ingredients: "五花肉", category: "荤素", type: "猪", method: "炒", difficulty: "2", flavor: "开胃", garnish: "荞苗" },
-        { name: "甜醋炖猪手", ingredients: "猪手", category: "荤", type: "猪", method: "炖", difficulty: "3", flavor: "油腻", garnish: "甜醋" },
-        { name: "蒸鸡蛋", ingredients: "鸡蛋", category: "荤", type: "鸡", method: "蒸", difficulty: "1", flavor: "清淡", garnish: "" },
-        { name: "银鱼蒸鸡蛋", ingredients: "鸡蛋", category: "荤", type: "鸡", method: "蒸", difficulty: "1", flavor: "清淡", garnish: "银鱼" },
-        { name: "洋葱焗鸡腿", ingredients: "鸡腿", category: "荤", type: "鸡", method: "焗", difficulty: "2", flavor: "浓烈", garnish: "洋葱" },
-        { name: "白灼虾", ingredients: "虾", category: "荤", type: "水产", method: "白灼", difficulty: "1", flavor: "清淡", garnish: "" },
-        { name: "蒸鲫鱼", ingredients: "鲫鱼", category: "荤", type: "水产", method: "蒸", difficulty: "1", flavor: "清淡", garnish: "" },
-        { name: "炒鱿鱼", ingredients: "鱿鱼", category: "荤", type: "水产", method: "炒", difficulty: "2", flavor: "清淡", garnish: "" },
-        { name: "白灼鱿鱼", ingredients: "鱿鱼", category: "荤", type: "水产", method: "白灼", difficulty: "1", flavor: "清淡", garnish: "" },
-        { name: "蒸鱼干", ingredients: "鱼干", category: "荤", type: "干货", method: "蒸", difficulty: "1", flavor: "开胃", garnish: "" },
-        { name: "炒花甲", ingredients: "花甲", category: "荤", type: "水产", method: "炒", difficulty: "2", flavor: "开胃", garnish: "" },
-        { name: "番茄炒蛋", ingredients: "蛋", category: "荤素", type: "鸡", method: "炒", difficulty: "1", flavor: "开胃", garnish: "番茄" },
-        { name: "辣椒煎虾滑", ingredients: "虾滑", category: "荤素", type: "水产", method: "煎", difficulty: "2", flavor: "开胃", garnish: "辣椒" },
-        { name: "辣椒煎鱼滑", ingredients: "鱼滑", category: "荤素", type: "水产", method: "煎", difficulty: "2", flavor: "开胃", garnish: "辣椒" }
-      ];
+  {
+    "name": "菠萝炒吊龙",
+    "ingredients": "吊龙、菠萝",
+    "types": [
+      "牛羊",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "香菜炒吊龙",
+    "ingredients": "吊龙、香菜",
+    "types": [
+      "牛羊",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "蒜心炒吊龙",
+    "ingredients": "吊龙、蒜心",
+    "types": [
+      "牛羊",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": false,
+    "convenience": "2"
+  },
+  {
+    "name": "虫草花蒸吊龙",
+    "ingredients": "吊龙、虫草花",
+    "types": [
+      "牛羊",
+      "蔬菜"
+    ],
+    "method": "蒸",
+    "appetizing": false,
+    "convenience": "1"
+  },
+  {
+    "name": "藠头炒鸡胸肉",
+    "ingredients": "鸡胸肉、藠头",
+    "types": [
+      "禽类"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "小米辣炒鸡胸肉",
+    "ingredients": "鸡胸肉、小米辣",
+    "types": [
+      "禽类",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "胡萝卜炒鸡胸肉",
+    "ingredients": "鸡胸肉、胡萝卜",
+    "types": [
+      "禽类",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": false,
+    "convenience": "2"
+  },
+  {
+    "name": "奥尔良煎鸡胸肉",
+    "ingredients": "鸡胸肉、奥尔良",
+    "types": [
+      "禽类"
+    ],
+    "method": "煎",
+    "appetizing": false,
+    "convenience": "3"
+  },
+  {
+    "name": "炒豆苗",
+    "ingredients": "豆苗",
+    "types": [
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": false,
+    "convenience": "1"
+  },
+  {
+    "name": "上汤豆苗",
+    "ingredients": "豆苗",
+    "types": [
+      "蔬菜"
+    ],
+    "method": "上汤",
+    "appetizing": false,
+    "convenience": "2"
+  },
+  {
+    "name": "五花肉炒菜心干",
+    "ingredients": "菜心干、五花肉",
+    "types": [
+      "猪",
+      "蔬菜",
+      "干货"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "酸梅酱炖鸭翅",
+    "ingredients": "鸭翅、酸梅酱",
+    "types": [
+      "禽类"
+    ],
+    "method": "炖",
+    "appetizing": true,
+    "convenience": "3"
+  },
+  {
+    "name": "菠萝炒鸭",
+    "ingredients": "鸭、菠萝",
+    "types": [
+      "禽类",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "3"
+  },
+  {
+    "name": "藠头炒鸭",
+    "ingredients": "鸭、藠头",
+    "types": [
+      "禽类"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "3"
+  },
+  {
+    "name": "胡萝卜炖排骨",
+    "ingredients": "排骨、胡萝卜",
+    "types": [
+      "猪",
+      "蔬菜"
+    ],
+    "method": "炖",
+    "appetizing": false,
+    "convenience": "3"
+  },
+  {
+    "name": "洋葱煎排骨",
+    "ingredients": "排骨、洋葱",
+    "types": [
+      "猪",
+      "蔬菜"
+    ],
+    "method": "煎",
+    "appetizing": false,
+    "convenience": "3"
+  },
+  {
+    "name": "蒸鸡",
+    "ingredients": "鸡",
+    "types": [
+      "禽类"
+    ],
+    "method": "蒸",
+    "appetizing": false,
+    "convenience": "2"
+  },
+  {
+    "name": "虫草花蒸鸡",
+    "ingredients": "鸡、虫草花",
+    "types": [
+      "禽类",
+      "蔬菜"
+    ],
+    "method": "蒸",
+    "appetizing": false,
+    "convenience": "2"
+  },
+  {
+    "name": "五花肉炒荞苗",
+    "ingredients": "荞苗、五花肉",
+    "types": [
+      "猪",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "荞苗炒五花肉",
+    "ingredients": "五花肉、荞苗",
+    "types": [
+      "猪",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "甜醋炖猪手",
+    "ingredients": "猪手、甜醋",
+    "types": [
+      "猪"
+    ],
+    "method": "炖",
+    "appetizing": false,
+    "convenience": "3"
+  },
+  {
+    "name": "蒸鸡蛋",
+    "ingredients": "鸡蛋",
+    "types": [
+      "蛋豆"
+    ],
+    "method": "蒸",
+    "appetizing": false,
+    "convenience": "1"
+  },
+  {
+    "name": "银鱼蒸鸡蛋",
+    "ingredients": "鸡蛋、银鱼",
+    "types": [
+      "水产",
+      "蛋豆"
+    ],
+    "method": "蒸",
+    "appetizing": false,
+    "convenience": "1"
+  },
+  {
+    "name": "洋葱焗鸡腿",
+    "ingredients": "鸡腿、洋葱",
+    "types": [
+      "禽类",
+      "蔬菜"
+    ],
+    "method": "焗",
+    "appetizing": false,
+    "convenience": "2"
+  },
+  {
+    "name": "白灼虾",
+    "ingredients": "虾",
+    "types": [
+      "水产"
+    ],
+    "method": "白灼",
+    "appetizing": false,
+    "convenience": "1"
+  },
+  {
+    "name": "蒸鲫鱼",
+    "ingredients": "鲫鱼",
+    "types": [
+      "水产"
+    ],
+    "method": "蒸",
+    "appetizing": false,
+    "convenience": "1"
+  },
+  {
+    "name": "炒鱿鱼",
+    "ingredients": "鱿鱼",
+    "types": [
+      "水产"
+    ],
+    "method": "炒",
+    "appetizing": false,
+    "convenience": "2"
+  },
+  {
+    "name": "白灼鱿鱼",
+    "ingredients": "鱿鱼",
+    "types": [
+      "水产"
+    ],
+    "method": "白灼",
+    "appetizing": false,
+    "convenience": "1"
+  },
+  {
+    "name": "蒸鱼干",
+    "ingredients": "鱼干",
+    "types": [
+      "水产",
+      "干货"
+    ],
+    "method": "蒸",
+    "appetizing": true,
+    "convenience": "1"
+  },
+  {
+    "name": "炒花甲",
+    "ingredients": "花甲",
+    "types": [
+      "水产"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "番茄炒蛋",
+    "ingredients": "蛋、番茄",
+    "types": [
+      "蛋豆",
+      "蔬菜"
+    ],
+    "method": "炒",
+    "appetizing": true,
+    "convenience": "1"
+  },
+  {
+    "name": "辣椒煎虾滑",
+    "ingredients": "虾滑、辣椒",
+    "types": [
+      "水产",
+      "蔬菜"
+    ],
+    "method": "煎",
+    "appetizing": true,
+    "convenience": "2"
+  },
+  {
+    "name": "辣椒煎鱼滑",
+    "ingredients": "鱼滑、辣椒",
+    "types": [
+      "水产",
+      "蔬菜"
+    ],
+    "method": "煎",
+    "appetizing": true,
+    "convenience": "2"
+  }
+];
 
       // Application states
       let recipes = [];
       let activeCategory = null; // No ingredient selected means all ingredients.
-      let activeDimension = '烹饪方式'; // "烹饪方式", "难易程度", "开胃菜", "快手菜"
+      let activeDimension = '烹饪方式'; // "烹饪方式", "方便程度", "开胃菜", "快手菜"
       let activeSubTag = null; // Selected tag on Left Sidebar (e.g. "炒" or "3星")
       let hasUnreadCartItems = false;
       let currentRecommendedDish = null;
@@ -97,11 +414,11 @@
         event.preventDefault();
         const name = document.getElementById('dish-name').value.trim();
         const ingredients = document.getElementById('dish-ingredients').value.trim();
-        const garnish = document.getElementById('dish-garnish').value.trim();
-        const type = document.getElementById('dish-type').value;
+        const types = [...document.querySelectorAll('#add-dish-form input[name="dish-types"]:checked')].map(input=>input.value);
         const method = document.getElementById('dish-method').value;
-        const difficulty = document.getElementById('dish-difficulty').value;
-        const flavor = document.getElementById('dish-flavor').value;
+        const convenience = document.getElementById('dish-convenience').value;
+        const appetizing = document.getElementById('dish-appetizing').value === '是';
+        if (!types.length) { showToast('请选择至少一个食材分类。', 'error'); return; }
 
         if (!name) {
           showToast("⚠️ 菜名不能为空！", "error");
@@ -119,18 +436,7 @@
           return;
         }
 
-        const category = (type === "蔬菜") ? "素" : "荤";
-
-        const newDish = {
-          name,
-          ingredients,
-          category,
-          type,
-          method,
-          difficulty,
-          flavor,
-          garnish
-        };
+        const newDish = {name, ingredients, types, method, convenience, appetizing};
 
         const nextRecipes = [...recipes, newDish];
         if (!saveRecipeData(nextRecipes)) return;
@@ -148,9 +454,8 @@
           showToast('当前没有可导出的菜谱。', 'info');
           return;
         }
-        const headers = ['菜名', '食材', '类别', '种类', '烹饪方式', '难易程度', '口味', '配料'];
-        const fields = ['name', 'ingredients', 'category', 'type', 'method', 'difficulty', 'flavor', 'garnish'];
-        const rows = recipes.map(recipe => fields.map(field => String(recipe[field] ?? '')));
+        const headers = recipeSchema.headers;
+        const rows = recipes.map(recipeSchema.row);
         const exportButtons = [...document.querySelectorAll('[data-recipe-export]')];
         const originalLabel = button.innerHTML;
         recipeExportInProgress = true;
@@ -162,10 +467,13 @@
         try {
           const workbookLibrary = await loadWorkbookParser();
           const sheet = workbookLibrary.utils.aoa_to_sheet([headers, ...rows]);
-          sheet['!cols'] = [28, 28, 10, 12, 14, 14, 12, 28].map(wch => ({wch}));
+          sheet['!cols'] = [28, 38, 26, 16, 12, 16].map(wch => ({wch}));
           sheet['!autofilter'] = {ref: sheet['!ref']};
           const workbook = workbookLibrary.utils.book_new();
           workbookLibrary.utils.book_append_sheet(workbook, sheet, '当前菜谱');
+          const principles = workbookLibrary.utils.aoa_to_sheet([['分类原则','填写说明'], ...recipeSchema.rules]);
+          principles['!cols'] = [{wch:20},{wch:100}];
+          workbookLibrary.utils.book_append_sheet(workbook, principles, '分类原则');
           const now = new Date();
           const date = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
           const filename = `蒜了菜谱-${date}.xlsx`;
@@ -221,7 +529,7 @@
       // Swipe switching for categories
       let touchStartX = 0;
       let touchStartY = 0;
-      const categoriesOrder = ["鸡", "猪", "牛", "水产", "鸭", "蔬菜", "干货"];
+      const categoriesOrder = recipeSchema.groups;
 
       function setupSwipeGestures() {
         const appScreen = document.getElementById('app-screen');
@@ -281,7 +589,12 @@
           try {
             const parsed = JSON.parse(stored);
             if (Array.isArray(parsed)) {
-              recipes = parsed.filter(r => r && r.name && typeof r.name === 'string' && !r.name.trim().startsWith('='));
+              recipes = parsed.filter(r => r && r.name && typeof r.name === 'string' && !r.name.trim().startsWith('=')).map(recipeSchema.normalize);
+              if (JSON.stringify(recipes) !== JSON.stringify(parsed)) {
+                const backupKey = 'garlic_recipes_schema1_backup';
+                const backedUp = readBrowserValue(backupKey) !== null || writeBrowserValue(backupKey, parsed, false);
+                if (backedUp) saveRecipeData(recipes, false);
+              }
             } else {
               recipes = [...defaultRecipes];
               showToast('⚠️ 已保存的菜谱格式异常，原数据未被覆盖，请从备份重新导入。', 'error');
@@ -394,67 +707,39 @@
 
       // Map headers and save parsed rows
       function parseAndSaveImportedData(rawRows) {
-        const headers = rawRows[0].map(h => String(h || '').trim());
-        const headerMap = {
-          "菜名": "name",
-          "食材": "ingredients",
-          "类别": "category",
-          "种类": "type",
-          "烹饪方式": "method",
-          "难易程度": "difficulty",
-          "口味": "flavor",
-          "配料": "garnish"
-        };
-
-        const mappedFields = headers.map(h => headerMap[h] || null);
-        const importedRecipes = [];
-
-        for (let i = 1; i < rawRows.length; i++) {
-          const row = rawRows[i];
-          if (!row || row.length === 0 || !row[0]) continue; // Skip empty/header rows
-          
-          const recipe = {
-            name: "", ingredients: "", category: "", type: "", 
-            method: "", difficulty: "1", flavor: "适中", garnish: ""
-          };
-          
-          headers.forEach((h, idx) => {
-            const field = mappedFields[idx];
-            if (field) {
-              let val = row[idx];
-              if (val === undefined || val === null) val = "";
-              recipe[field] = String(val).trim();
-            }
-          });
-          
-          if (recipe.name) {
-            // Check if recipe name starts with '=' (Excel Formula)
-            if (recipe.name.startsWith('=')) {
-              const prefix = recipe.garnish ? recipe.garnish : "";
-              const mid = recipe.method ? recipe.method : "";
-              const suffix = recipe.ingredients ? recipe.ingredients : "";
-              const repairedName = (prefix + mid + suffix).trim();
-              
-              if (repairedName && !repairedName.startsWith('=')) {
-                recipe.name = repairedName;
-              } else {
-                // If we can't construct a valid name, skip this formula row
-                continue;
-              }
-            }
-            importedRecipes.push(recipe);
+        const headers = rawRows[0]?.map(h=>String(h || '').trim()) || [];
+        const modern = headers.includes('食材分类') || headers.includes('食材分类（可多选）');
+        const mapping = modern
+          ? {'菜名':'name','食材':'ingredients','食材分类':'types','食材分类（可多选）':'types','烹饪方式':'method','开胃':'appetizing','方便程度':'convenience'}
+          : {'菜名':'name','食材':'ingredients','类别':'category','种类':'type','烹饪方式':'method','难易程度':'difficulty','方便程度':'difficulty','口味':'flavor','配料':'garnish'};
+        const required = modern ? recipeSchema.headers.filter(h=>h!=='食材分类') : ['菜名','食材','种类','烹饪方式'];
+        if (!required.every(h=>headers.includes(h))) { showToast('表头不完整，请使用下载的模板填写。', 'error'); return; }
+        const imported = [], names = new Set();
+        for (let i=1; i<rawRows.length; i++) {
+          const values = rawRows[i];
+          if (!values || values.every(v=>v===null || v===undefined || String(v).trim()==='')) continue;
+          const source = {};
+          headers.forEach((h,j)=>{if(mapping[h])source[mapping[h]]=String(values[j] ?? '').trim();});
+          if (!modern && source.name?.startsWith('=')) source.name = [source.garnish,source.method,source.ingredients].filter(Boolean).join('');
+          const fail = reason=>showToast('第'+(i+1)+'行：'+reason+'，本次未替换原菜谱。','error');
+          if (!source.name || source.name.startsWith('=')) { fail('请填写实际菜名'); return; }
+          if (names.has(source.name.toLowerCase())) { fail('菜名重复，请先确认是否为同一道菜'); return; }
+          if (modern) {
+            const groups = recipeSchema.groupNames(source.types);
+            if (!groups.length || groups.some(g=>!recipeSchema.groups.includes(g))) { fail('食材分类需使用模板中的分类'); return; }
+            if (!recipeSchema.methods.includes(source.method) && source.method!=='其他') { fail('烹饪方式不在模板选项内'); return; }
+            if (!['是','否','true','false','1','0'].includes(source.appetizing)) { fail('开胃请填是或否'); return; }
+            if (!['1','2','3'].includes(source.convenience)) { fail('方便程度请填1、2或3'); return; }
+            source.types = groups;
           }
+          const recipe = recipeSchema.normalize(source);
+          imported.push(recipe); names.add(recipe.name.toLowerCase());
         }
-
-        if (importedRecipes.length > 0) {
-          if (!saveRecipeData(importedRecipes)) return;
-          recipes = importedRecipes;
-          showToast(`🎉 成功导入 ${importedRecipes.length} 条菜谱并自动清洗公式数据！`, "success");
-          shakeRecommendation();
-          renderApp();
-        } else {
-          showToast("⚠️ 未解析出有效菜品！（已跳过所有无法修复的公式或空行）", "error");
-        }
+        if (!imported.length) { showToast('表格没有有效菜品，原菜谱未改变。','error'); return; }
+        if (!saveRecipeData(imported)) return;
+        recipes = imported;
+        showToast('成功导入 '+imported.length+' 条菜谱！','success');
+        shakeRecommendation(); renderApp();
       }
 
 
@@ -581,7 +866,7 @@
 
       function renderApp() {
         recipePageTurn?.beforeRender();
-        recipes = recipes.filter(r => r && r.name && typeof r.name === 'string' && !r.name.trim().startsWith('='));
+        recipes = recipes.filter(r => r && r.name && typeof r.name === 'string' && !r.name.trim().startsWith('=')).map(recipeSchema.normalize);
         document.querySelectorAll('.category-btn').forEach(btn => {
           const selected = btn.dataset.category === activeCategory;
           btn.classList.toggle('active', selected);
@@ -591,8 +876,8 @@
         const leftSidebar = document.getElementById('left-sidebar-tags');
         let tags = [];
         if (activeDimension === '烹饪方式') {
-          tags = [['炒','🔥'],['蒸','💧'],['煎','🍳'],['焗','🥘'],['炖','🍲'],['白灼','🥗'],['上汤','🥣']].map(([text,emoji]) => ({text,emoji,value:text}));
-        } else if (activeDimension === '难易程度') {
+          tags = [['炒','🔥'],['蒸','💧'],['煎','🍳'],['焗','🥘'],['炖','🍲'],['白灼','🥗'],['上汤','🥣'],['其它','🧄']].map(([text,emoji]) => ({text,emoji,value:text}));
+        } else if (activeDimension === '方便程度') {
           tags = [3,2,1].map(n => ({text:n+'星',value:String(n),emoji:'☆'.repeat(n)}));
         }
         // Reuse the same buttons within a dimension so their height can animate,
@@ -607,7 +892,7 @@
             btn.dataset.tagValue = tag.value;
             btn.setAttribute('aria-label', tag.text);
             btn.onclick = () => selectSubTag(tag.value);
-            btn.innerHTML = '<span class="tag-emoji" aria-hidden="true">' + (activeDimension === '难易程度' ? handStarMarkup(Number(tag.value)) : handIconMarkup(handIconKey(tag.emoji))) + '</span><span class="tag-label" aria-hidden="true">' + tag.text + '</span>';
+            btn.innerHTML = '<span class="tag-emoji" aria-hidden="true">' + (activeDimension === '方便程度' ? handStarMarkup(Number(tag.value)) : handIconMarkup(handIconKey(tag.emoji))) + '</span><span class="tag-label" aria-hidden="true">' + tag.text + '</span>';
             leftSidebar.append(btn);
           }
         }
@@ -619,27 +904,27 @@
           btn.setAttribute('aria-pressed', String(selected));
         }
         // With no sub-filter dimension, leave the icon rail empty.
-        const dimensions = {'烹饪方式':'dim-method','难易程度':'dim-difficulty','开胃菜':'dim-appetizer','快手菜':'dim-quick'};
+        const dimensions = {'烹饪方式':'dim-method','方便程度':'dim-difficulty','开胃菜':'dim-appetizer','快手菜':'dim-quick'};
         for (const [dimension,id] of Object.entries(dimensions)) {
           const btn = document.getElementById(id);
           const selected = activeDimension === dimension;
           btn.classList.toggle('bg-[#b5cad9]', selected);
           btn.setAttribute('aria-pressed', String(selected));
         }
-        let filtered = activeCategory ? recipes.filter(recipe => recipe.type === activeCategory) : [...recipes];
+        let filtered = activeCategory ? recipes.filter(recipe => recipe.types.includes(activeCategory)) : [...recipes];
         const categoryLabel = activeCategory || '全部食材';
         let indicatorText = '种类：' + categoryLabel;
         if (activeDimension === '烹饪方式') {
           if (activeSubTag) filtered = filtered.filter(r => r.method === activeSubTag);
           indicatorText = categoryLabel + ' ＋ ' + (activeSubTag || '全部烹饪');
-        } else if (activeDimension === '难易程度') {
-          if (activeSubTag) filtered = filtered.filter(r => r.difficulty === activeSubTag);
-          indicatorText = categoryLabel + ' ＋ ' + (activeSubTag ? '难度:' + activeSubTag + '星' : '全部难度');
+        } else if (activeDimension === '方便程度') {
+          if (activeSubTag) filtered = filtered.filter(r => r.convenience === activeSubTag);
+          indicatorText = categoryLabel + ' ＋ ' + (activeSubTag ? '方便:' + activeSubTag + '星' : '全部方便程度');
         } else if (activeDimension === '开胃菜') {
-          filtered = filtered.filter(r => r.flavor === '开胃');
+          filtered = filtered.filter(r => r.appetizing);
           indicatorText = categoryLabel + ' ＋ 开胃菜';
         } else if (activeDimension === '快手菜') {
-          filtered = filtered.filter(r => r.difficulty === '1');
+          filtered = filtered.filter(r => r.convenience === '1');
           indicatorText = categoryLabel + ' ＋ 快手菜';
         }
         document.getElementById('active-filter-indicator').innerText = indicatorText;
@@ -663,18 +948,18 @@
           copy.append(name);
           const meta = document.createElement('div');
           meta.className = 'dish-meta';
-          for (const text of [recipe.ingredients,recipe.method,recipe.flavor]) {
+          for (const text of [recipe.ingredients,recipe.method,recipe.appetizing ? '开胃' : '']) {
             if (!text) continue;
             const span = document.createElement('span'); span.textContent = text; meta.append(span);
           }
           const stars = document.createElement('span'); stars.className = 'dish-stars';
-          const difficulty = parseInt(recipe.difficulty) || 1;
+          const difficulty = parseInt(recipe.convenience) || 0;
           stars.innerHTML = handStarMarkup(difficulty);
           stars.setAttribute('role', 'img');
-          stars.setAttribute('aria-label', '难度' + difficulty + '星'); meta.append(stars);
+          stars.setAttribute('aria-label', difficulty ? '方便程度' + difficulty + '星，星越少越方便' : '方便程度未标注'); meta.append(stars);
           copy.append(meta);
           const detail = document.createElement('p'); detail.className = 'dish-detail';
-          detail.textContent = recipe.garnish ? '配：' + recipe.garnish : '基础烹饪'; copy.append(detail);
+          detail.textContent = recipe.types.join(' / '); copy.append(detail);
           const btn = document.createElement('button');
           btn.className = isEditMode ? 'delete-btn' : 'add-btn';
           btn.textContent = isEditMode ? '×' : '＋';
@@ -920,7 +1205,7 @@
       }
     
 
-const categoryIcons = ['chicken','pig','cow','fish','duck','cabbage','mushroom'];
+const categoryIcons = ['chicken','pig','cow','fish','egg-beans','cabbage','mushroom'];
 document.querySelector('.categories').replaceChildren(...categoriesOrder.map((name, i) => {
   const button = document.createElement('button');
   button.className = 'category-btn'; button.dataset.category = name;

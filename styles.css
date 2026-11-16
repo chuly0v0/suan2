@@ -130,3 +130,5 @@
 /* This only appears when a complete new version is waiting; existing user data is kept. */
 .site-update-notice{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:16px;max-width:calc(100% - 28px);padding:10px 14px;background:#fcfcf5;color:#535840;border-radius:15px 12px 17px 13px;box-shadow:0 4px 20px #434b3020;font-size:12px;white-space:nowrap}
 .site-update-notice button{min-height:36px;padding:6px 12px;background:#d5d5ab;border-radius:13px;font-size:12px}
+
+.dish-type-options{border:0;padding:0;margin:16px 0 8px;display:flex;flex-wrap:wrap;gap:8px 14px}.dish-type-options legend{font-size:12px;padding:0;margin-bottom:7px}.form-sheet .dish-type-options label{display:inline-flex;align-items:center;gap:6px;margin:0;min-height:36px}.form-sheet .dish-type-options input{width:18px;height:18px;padding:0;accent-color:#787b66}

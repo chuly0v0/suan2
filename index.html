@@ -8,6 +8,7 @@
   <title>蒜了 · 今天也好好吃饭</title>
   <link rel="icon" href="assets/garlic.png">
   <link rel="stylesheet" href="styles.css">
+  <script src="schema.js" defer></script>
   <script src="storage.js" defer></script>
   <script src="icons.js" defer></script>
   <script src="app.js" defer></script>
@@ -70,7 +71,7 @@
             <div class="clipboard-art" aria-hidden="true"></div>
             <div class="clipboard-menu">
               <button onclick="selectDimension('烹饪方式')" id="dim-method" class="dimension-btn"><span>烹饪方式 <span class="hand-icon menu-emoji icon-frying-pan" data-hand-icon="frying-pan" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
-              <button onclick="selectDimension('难易程度')" id="dim-difficulty" class="dimension-btn"><span>难易程度 <span class="hand-icon menu-emoji icon-star" data-hand-icon="star" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
+              <button onclick="selectDimension('方便程度')" id="dim-difficulty" class="dimension-btn"><span>方便程度 <span class="hand-icon menu-emoji icon-star" data-hand-icon="star" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
               <button onclick="selectDimension('开胃菜')" id="dim-appetizer" class="dimension-btn"><span>开胃菜 <span class="hand-icon menu-emoji icon-tomato" data-hand-icon="tomato" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
               <button onclick="selectDimension('快手菜')" id="dim-quick" class="dimension-btn"><span>快手菜 <span class="hand-icon menu-emoji icon-stopwatch" data-hand-icon="stopwatch" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
             </div>
@@ -102,8 +103,8 @@
       <form id="add-dish-form" onsubmit="saveNewDish(event)">
         <label for="dish-name">菜名 <span class="required">*</span></label><input type="text" id="dish-name" required placeholder="如：小炒肉">
         <label for="dish-ingredients">主要食材 <span class="required">*</span></label><input type="text" id="dish-ingredients" required placeholder="如：五花肉、青椒">
-        <label for="dish-garnish">配料 <span class="optional">选填</span></label><input type="text" id="dish-garnish" placeholder="如：蒜头、豆豉">
-        <div class="form-grid"><div><label for="dish-type">种类</label><select id="dish-type"><option value="鸡">鸡</option><option value="猪">猪</option><option value="牛">牛</option><option value="水产">水产</option><option value="鸭">鸭</option><option value="蔬菜">蔬菜</option><option value="干货">干货</option></select></div><div><label for="dish-method">烹饪方式</label><select id="dish-method"><option>炒</option><option>蒸</option><option>煎</option><option>焗</option><option>炖</option><option>白灼</option><option>上汤</option></select></div><div><label for="dish-difficulty">难易程度</label><select id="dish-difficulty"><option value="1">1 星</option><option value="2">2 星</option><option value="3">3 星</option></select></div><div><label for="dish-flavor">口味</label><select id="dish-flavor"><option>开胃</option><option>适中</option><option>清淡</option><option>油腻</option></select></div></div>
+        <fieldset class="dish-type-options"><legend>食材分类（可多选）</legend><label><input type="checkbox" name="dish-types" value="禽类">禽类</label><label><input type="checkbox" name="dish-types" value="猪">猪</label><label><input type="checkbox" name="dish-types" value="牛羊">牛羊</label><label><input type="checkbox" name="dish-types" value="水产">水产</label><label><input type="checkbox" name="dish-types" value="蛋豆">蛋豆</label><label><input type="checkbox" name="dish-types" value="蔬菜">蔬菜</label><label><input type="checkbox" name="dish-types" value="干货">干货</label></fieldset>
+        <div class="form-grid"><div><label for="dish-method">烹饪方式</label><select id="dish-method"><option>炒</option><option>蒸</option><option>煎</option><option>焗</option><option>炖</option><option>白灼</option><option>上汤</option><option>其它</option></select></div><div><label for="dish-convenience">方便程度</label><select id="dish-convenience"><option value="1">1 星 · 省事</option><option value="2">2 星 · 一般</option><option value="3">3 星 · 较费事</option></select></div><div><label for="dish-appetizing">开胃</label><select id="dish-appetizing"><option>否</option><option>是</option></select></div></div>
         <div class="dialog-actions"><button type="button" class="text-button" onclick="closeAddDishModal()">取消</button><button type="submit" class="paint-button">保存菜品</button></div>
       </form>
     </div>
