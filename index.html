@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f1f1e3">
+  <meta name="description" content="蒜了，一本慢慢挑、好好吃的家常菜谱。">
+  <title>蒜了 · 今天也好好吃饭</title>
+  <link rel="icon" href="assets/garlic.png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="assets/vendor/xlsx.full.min.js" defer></script>
+  <script src="icons.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <filter id="pencil-edge" x="-10%" y="-50%" width="120%" height="200%"><feTurbulence type="fractalNoise" baseFrequency=".08 .3" numOctaves="2" seed="12" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <symbol id="pencil-line" viewBox="0 0 180 12"><path d="M5 6 C34 3 54 8 83 6 S137 7 175 5" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" filter="url(#pencil-edge)"/></symbol>
+  </defs></svg>
+  <main class="recipe-book">
+    <section id="home-screen" class="home-screen fade-in" aria-label="今日推荐">
+      <header class="home-header">
+        <div class="brand"><img src="assets/garlic.png" alt="" width="36" height="36"><span>蒜了<span class="brand-dot">。</span></span></div>
+        <div class="data-actions">
+          <button class="text-button" onclick="downloadCSVTemplate()"><span aria-hidden="true">↓</span> 下载模板</button>
+          <button class="paint-button small" onclick="triggerFileSelect()">更新数据 <span aria-hidden="true">↗</span></button>
+          <input type="file" id="file-uploader" accept=".xlsx,.csv" class="hidden" onchange="handleFileUpload(event)" aria-label="上传菜谱数据">
+        </div>
+      </header>
+      <div class="home-content">
+        <div class="recommendation">
+          <p class="eyebrow">一日三餐，慢慢挑。</p>
+          <h1>今天吃点什么？</h1>
+          <div class="recommended-dish"><span id="recommend-dish-name">加载中…</span><button class="add-recommended" onclick="addRecommendedToCart()" aria-label="将推荐菜加入砂锅">＋</button></div>
+          <p id="recommend-ingredients" class="recommend-ingredients"></p>
+          <button class="paint-button shuffle" onclick="shakeRecommendation()">换一个 <span aria-hidden="true">↻</span></button>
+        </div>
+        <div class="home-illustration">
+          <button id="home-pot-container" class="home-pot" onclick="transitionToApp()" aria-label="打开菜谱，开始选菜"><img src="assets/penguin-pot.gif" alt="正在煮饭的企鹅砂锅" fetchpriority="high"></button>
+          <p class="pot-caption">点点砂锅，翻翻菜谱 <span aria-hidden="true">↗</span></p>
+        </div>
+      </div>
+      <footer class="home-footer"><span>简单做饭，好好吃饭。</span><span>我的家常菜谱</span></footer>
+    </section>
+
+    <section id="app-screen" class="app-screen hidden fade-in" aria-label="菜谱">
+      <header class="app-header">
+        <button class="brand" onclick="backToHome()" aria-label="蒜了，返回首页"><img src="assets/garlic.png" alt="" width="30" height="30"><span>蒜了<span class="brand-dot">。</span></span></button>
+        <span class="app-note">今天，也好好吃饭。</span>
+      </header>
+      <nav class="categories" aria-label="食材种类">
+        <!-- categories populated once, retaining the original handlers -->
+      </nav>
+      <div class="book-body">
+        <aside class="left-sidebar" aria-label="具体筛选">
+          <div id="left-sidebar-tags" class="tag-list"></div>
+          <button class="back-button" onclick="backToHome()"><span aria-hidden="true">↶</span> 返回</button>
+        </aside>
+        <section class="recipe-content" aria-label="菜品列表">
+          <div class="filter-caption"><span id="active-filter-indicator">种类：鸡</span><span id="filtered-count">0 条</span></div>
+          <div id="recipe-list-container" class="recipe-list"></div>
+        </section>
+        <aside class="right-sidebar" aria-label="筛选与菜品管理">
+          <div class="clipboard">
+            <div class="clipboard-art" aria-hidden="true"></div>
+            <div class="clipboard-menu">
+              <button onclick="selectDimension('烹饪方式')" id="dim-method" class="dimension-btn"><span>烹饪方式 <span class="hand-icon menu-emoji icon-frying-pan" data-hand-icon="frying-pan" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
+              <button onclick="selectDimension('难易程度')" id="dim-difficulty" class="dimension-btn"><span>难易程度 <span class="hand-icon menu-emoji icon-star" data-hand-icon="star" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
+              <button onclick="selectDimension('开胃菜')" id="dim-appetizer" class="dimension-btn"><span>开胃菜 <span class="hand-icon menu-emoji icon-tomato" data-hand-icon="tomato" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
+              <button onclick="selectDimension('快手菜')" id="dim-quick" class="dimension-btn"><span>快手菜 <span class="hand-icon menu-emoji icon-stopwatch" data-hand-icon="stopwatch" aria-hidden="true"></span></span><svg class="menu-line" aria-hidden="true"><use href="#pencil-line"/></svg></button>
+            </div>
+          </div>
+          <div class="sidebar-actions">
+            <button class="text-button" onclick="scrollToTop()">回到顶部 <span aria-hidden="true">↑</span></button>
+            <button class="text-button" onclick="openAddDishModal()">增加菜品 <span aria-hidden="true">＋</span></button>
+            <button class="text-button" onclick="toggleEditMode()" id="edit-mode-btn">编辑菜品 <span class="hand-icon icon-pencil" data-hand-icon="pencil" aria-hidden="true"></span></button>
+          </div>
+        </aside>
+      </div>
+      <div class="floating-pot">
+        <section id="cart-popup" class="cart-popup hidden fade-in" aria-label="我的砂锅">
+          <header class="cart-header"><h2>我的砂锅</h2><span>长按 / 点 × 删除</span></header>
+          <div id="cart-items-list" class="cart-items"></div>
+          <div class="cart-actions"><button class="text-button danger" onclick="clearCart()">清空</button><button class="paint-button small" onclick="toggleCart()">关闭</button></div>
+        </section>
+        <button class="cart-toggle" onclick="toggleCart()" aria-label="查看我的砂锅"><span id="cart-star" class="hidden" aria-hidden="true"></span><span class="pot-image"><img src="assets/pot.png" alt="企鹅砂锅"></span><span id="cart-badge" class="cart-badge hidden">0</span><span class="cart-label">我的砂锅</span></button>
+      </div>
+    </section>
+  </main>
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
+  <div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-text">
+    <div id="confirm-box" class="modal-sheet confirm-sheet scale-95 opacity-0"><div id="confirm-emoji" class="confirm-emoji" aria-hidden="true"></div><p id="confirm-text"></p><div class="dialog-actions"><button id="confirm-cancel-btn" class="text-button">取消</button><button id="confirm-ok-btn" class="paint-button danger">确定</button></div></div>
+  </div>
+  <div id="add-dish-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="add-dish-title">
+    <div class="modal-sheet form-sheet scale-95 opacity-0"><header class="form-header"><p class="eyebrow">给家常菜谱添一笔</p><h2 id="add-dish-title">增加新菜品</h2></header>
+      <form id="add-dish-form" onsubmit="saveNewDish(event)">
+        <label for="dish-name">菜名 <span class="required">*</span></label><input type="text" id="dish-name" required placeholder="如：小炒肉">
+        <label for="dish-ingredients">主要食材 <span class="required">*</span></label><input type="text" id="dish-ingredients" required placeholder="如：五花肉、青椒">
+        <label for="dish-garnish">配料 <span class="optional">选填</span></label><input type="text" id="dish-garnish" placeholder="如：蒜头、豆豉">
+        <div class="form-grid"><div><label for="dish-type">种类</label><select id="dish-type"><option value="鸡">鸡</option><option value="猪">猪</option><option value="牛">牛</option><option value="水产">水产</option><option value="鸭">鸭</option><option value="蔬菜">蔬菜</option><option value="干货">干货</option></select></div><div><label for="dish-method">烹饪方式</label><select id="dish-method"><option>炒</option><option>蒸</option><option>煎</option><option>焗</option><option>炖</option><option>白灼</option><option>上汤</option></select></div><div><label for="dish-difficulty">难易程度</label><select id="dish-difficulty"><option value="1">1 星</option><option value="2">2 星</option><option value="3">3 星</option></select></div><div><label for="dish-flavor">口味</label><select id="dish-flavor"><option>开胃</option><option>适中</option><option>清淡</option><option>油腻</option></select></div></div>
+        <div class="dialog-actions"><button type="button" class="text-button" onclick="closeAddDishModal()">取消</button><button type="submit" class="paint-button">保存菜品</button></div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
