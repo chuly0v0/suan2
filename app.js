@@ -39,8 +39,8 @@
 
       // Application states
       let recipes = [];
-      let activeCategory = "鸡";
-      let activeDimension = null; // "烹饪方式", "难易程度", "开胃菜", "快手菜"
+      let activeCategory = null; // No ingredient selected means all ingredients.
+      let activeDimension = '烹饪方式'; // "烹饪方式", "难易程度", "开胃菜", "快手菜"
       let activeSubTag = null; // Selected tag on Left Sidebar (e.g. "炒" or "3星")
       let hasUnreadCartItems = false;
       let currentRecommendedDish = null;
@@ -512,8 +512,12 @@
           
           pot.classList.remove('scale-[2.5]', 'opacity-0');
           homeScreen.classList.remove('opacity-0');
-          
+          activeCategory = null;
+          activeDimension = '烹饪方式';
+          activeSubTag = null;
           renderApp();
+          document.getElementById('recipe-list-container').scrollTop = 0;
+          document.getElementById('left-sidebar-tags').scrollTop = 0;
         }, 600);
       }
 
@@ -533,7 +537,7 @@
       }
 
       function selectCategory(category) {
-        activeCategory = category;
+        activeCategory = activeCategory === category ? null : category;
         renderApp();
         
         const activeBtn = document.querySelector(`.category-btn[data-category="${category}"]`);
@@ -622,20 +626,21 @@
           btn.classList.toggle('bg-[#b5cad9]', selected);
           btn.setAttribute('aria-pressed', String(selected));
         }
-        let filtered = recipes.filter(recipe => recipe.type === activeCategory);
-        let indicatorText = '种类：' + activeCategory;
+        let filtered = activeCategory ? recipes.filter(recipe => recipe.type === activeCategory) : [...recipes];
+        const categoryLabel = activeCategory || '全部食材';
+        let indicatorText = '种类：' + categoryLabel;
         if (activeDimension === '烹饪方式') {
           if (activeSubTag) filtered = filtered.filter(r => r.method === activeSubTag);
-          indicatorText = activeCategory + ' ＋ ' + (activeSubTag || '全部烹饪');
+          indicatorText = categoryLabel + ' ＋ ' + (activeSubTag || '全部烹饪');
         } else if (activeDimension === '难易程度') {
           if (activeSubTag) filtered = filtered.filter(r => r.difficulty === activeSubTag);
-          indicatorText = activeCategory + ' ＋ ' + (activeSubTag ? '难度:' + activeSubTag + '星' : '全部难度');
+          indicatorText = categoryLabel + ' ＋ ' + (activeSubTag ? '难度:' + activeSubTag + '星' : '全部难度');
         } else if (activeDimension === '开胃菜') {
           filtered = filtered.filter(r => r.flavor === '开胃');
-          indicatorText = activeCategory + ' ＋ 开胃菜';
+          indicatorText = categoryLabel + ' ＋ 开胃菜';
         } else if (activeDimension === '快手菜') {
           filtered = filtered.filter(r => r.difficulty === '1');
-          indicatorText = activeCategory + ' ＋ 快手菜';
+          indicatorText = categoryLabel + ' ＋ 快手菜';
         }
         document.getElementById('active-filter-indicator').innerText = indicatorText;
         document.getElementById('filtered-count').innerText = filtered.length + ' 条';
