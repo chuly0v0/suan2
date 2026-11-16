@@ -45,6 +45,7 @@
       let hasUnreadCartItems = false;
       let currentRecommendedDish = null;
       let isEditMode = false;
+      let recipePageTurn = null;
 
       // Toggle edit mode
       function toggleEditMode() {
@@ -591,6 +592,7 @@
       // --- RENDER APP LAYOUTS & FILTERS ---
 
       function renderApp() {
+        recipePageTurn?.beforeRender();
         recipes = recipes.filter(r => r && r.name && typeof r.name === 'string' && !r.name.trim().startsWith('='));
         document.querySelectorAll('.category-btn').forEach(btn => {
           const selected = btn.dataset.category === activeCategory;
@@ -654,9 +656,11 @@
         document.getElementById('active-filter-indicator').innerText = indicatorText;
         document.getElementById('filtered-count').innerText = filtered.length + ' 条';
         const list = document.getElementById('recipe-list-container');
-        list.replaceChildren();
+        const pageContent = document.createElement('div');
+        pageContent.className = 'recipe-page-content';
+        list.replaceChildren(pageContent);
         if (!filtered.length) {
-          list.innerHTML = '<div class="empty-state"><div class="empty-icon">' + handIconMarkup('frying-pan') + '</div><p>这里还没有菜品</p><p>换个分类或筛选试试</p><button class="paint-button small" onclick="restoreDefaults()">恢复默认33道</button></div>';
+          pageContent.innerHTML = '<div class="empty-state"><div class="empty-icon">' + handIconMarkup('frying-pan') + '</div><p>这里还没有菜品</p><p>换个分类或筛选试试</p><button class="paint-button small" onclick="restoreDefaults()">恢复默认33道</button></div>';
         }
         for (const recipe of filtered) {
           const row = document.createElement('article');
@@ -687,9 +691,10 @@
           btn.setAttribute('aria-label', (isEditMode ? '删除菜品：' : '加入砂锅：') + recipe.name);
           btn.onclick = e => {e.stopPropagation(); isEditMode ? confirmDeleteDish(recipe.name) : addToCart(recipe.name);};
           if (!isEditMode) row.onclick = () => addToCart(recipe.name);
-          row.append(copy, btn); list.append(row);
+          row.append(copy, btn); pageContent.append(row);
         }
         renderCartUI();
+        recipePageTurn?.afterRender();
       }
 
 
@@ -924,3 +929,108 @@ for (const modal of document.querySelectorAll('.modal')) {
     else if (!e.shiftKey && document.activeElement === last) {e.preventDefault();first.focus();}
   });
 }
+
+// Continue through cooking methods only after a fresh gesture at the list end.
+recipePageTurn = (() => {
+  const list = document.getElementById('recipe-list-container');
+  const caption = document.getElementById('active-filter-indicator');
+  caption.setAttribute('aria-live', 'polite');
+  let lastKey = '', serial = 0, busy = false, committing = false;
+  let cooldownUntil = 0, suppressClickUntil = 0, wheel = null, touch = null;
+  const animations = new Set();
+  const key = () => [activeCategory, activeDimension, activeSubTag].join('|');
+  const atBottom = () => list.scrollHeight - list.clientHeight - list.scrollTop <= 3;
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const allowed = () => !isEditMode && !document.getElementById('app-screen').classList.contains('hidden')
+    && !document.querySelector('.modal:not(.hidden)') && document.getElementById('cart-popup').classList.contains('hidden');
+  function nextMethod() {
+    if (activeDimension !== '烹饪方式' || !activeSubTag) return null;
+    const tags = [...document.querySelectorAll('#left-sidebar-tags .tag-btn')];
+    const index = tags.findIndex(button => button.dataset.tagValue === activeSubTag);
+    return index >= 0 ? tags[index + 1]?.dataset.tagValue || null : null;
+  }
+  function cancel() {
+    serial++;
+    for (const animation of animations) animation.cancel();
+    animations.clear();
+    busy = false; wheel = null; touch = null; cooldownUntil = 0;
+    list.removeAttribute('aria-busy');
+  }
+  async function animatePage(frames, duration) {
+    const content = list.querySelector('.recipe-page-content');
+    if (reducedMotion() || !content?.animate) return;
+    const animation = content.animate(frames, {duration, easing:'cubic-bezier(.2,.65,.3,1)', fill:'both'});
+    animations.add(animation);
+    try { await animation.finished; }
+    finally { animation.cancel(); animations.delete(animation); }
+  }
+  async function advance() {
+    const next = nextMethod();
+    if (!next || busy || !allowed() || performance.now() < cooldownUntil) return;
+    const token = ++serial, previousKey = key();
+    busy = true; cooldownUntil = performance.now() + 900;
+    list.setAttribute('aria-busy', 'true');
+    try {
+      await animatePage([{transform:'translateY(0)',opacity:1},{transform:'translateY(-36px)',opacity:0}], 160);
+      if (token !== serial || key() !== previousKey || !allowed()) return;
+      activeSubTag = next;
+      committing = true;
+      try { renderApp(); } finally { committing = false; }
+      document.querySelector('#left-sidebar-tags [aria-pressed="true"]')?.scrollIntoView({block:'nearest', behavior:reducedMotion()?'auto':'smooth'});
+      await animatePage([{transform:'translateY(44px)',opacity:0},{transform:'translateY(0)',opacity:1}], 260);
+    } catch (error) {
+      if (error.name !== 'AbortError') console.error(error);
+    } finally {
+      if (token === serial) { busy = false; list.removeAttribute('aria-busy'); }
+    }
+  }
+  list.addEventListener('wheel', event => {
+    if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !allowed()) return;
+    const now = performance.now();
+    if (!wheel || now - wheel.last > 300) wheel = {eligible:atBottom() && !busy && now >= cooldownUntil, distance:0, triggered:false, last:now};
+    wheel.last = now;
+    if (busy || wheel.triggered || now < cooldownUntil) { if (event.cancelable) event.preventDefault(); return; }
+    if (event.deltaY <= 0) { wheel.eligible = false; wheel.distance = 0; return; }
+    if (!wheel.eligible || !atBottom() || !nextMethod()) return;
+    if (event.cancelable) event.preventDefault();
+    wheel.distance += event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? list.clientHeight : 1);
+    if (wheel.distance >= 64) { wheel.triggered = true; void advance(); }
+  }, {passive:false});
+  list.addEventListener('touchstart', event => {
+    if (event.touches.length !== 1) { touch = null; return; }
+    const point = event.touches[0];
+    touch = {id:point.identifier, x:point.clientX, y:point.clientY, key:key(), eligible:atBottom() && allowed() && !busy && performance.now() >= cooldownUntil};
+  }, {passive:true});
+  list.addEventListener('touchmove', event => {
+    if (!touch || event.touches.length !== 1) { touch = null; return; }
+    const point = event.touches[0], dy = touch.y - point.clientY, dx = point.clientX - touch.x;
+    if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) suppressClickUntil = performance.now() + 400;
+    if (touch.eligible && dy > 0 && dy > Math.abs(dx) * 1.3 && nextMethod() && allowed() && event.cancelable) event.preventDefault();
+  }, {passive:false});
+  list.addEventListener('touchend', event => {
+    const gesture = touch; touch = null;
+    if (!gesture?.eligible || event.touches.length || key() !== gesture.key) return;
+    const point = [...event.changedTouches].find(item => item.identifier === gesture.id);
+    if (!point) return;
+    const dy = gesture.y - point.clientY, dx = point.clientX - gesture.x;
+    if (dy >= 64 && dy > Math.abs(dx) * 1.3 && atBottom()) void advance();
+  }, {passive:true});
+  list.addEventListener('touchcancel', () => { touch = null; }, {passive:true});
+  list.addEventListener('click', event => {
+    if (busy || performance.now() < suppressClickUntil) { event.preventDefault(); event.stopImmediatePropagation(); }
+  }, true);
+  return {
+    beforeRender() { if (!committing) cancel(); },
+    afterRender() {
+      if (lastKey !== key()) { list.scrollTop = 0; lastKey = key(); }
+      const next = nextMethod();
+      if (!next || isEditMode) return;
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'recipe-next-method';
+      button.textContent = '下一个：' + next + ' ↓';
+      button.setAttribute('aria-label', '查看' + next + '菜谱');
+      button.onclick = () => void advance();
+      list.querySelector('.recipe-page-content').append(button);
+    }
+  };
+})();
