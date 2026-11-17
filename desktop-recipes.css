@@ -1,0 +1,88 @@
+/* Keep the original icon rail / single recipe list / clipboard arrangement. */
+#app-screen .recipe-page-content { display: flow-root; }
+#app-screen .app-header { gap: 12px; }
+#app-screen .recipe-actions { display: flex; align-items: center; justify-content: flex-end; gap: 14px; }
+#app-screen .recipe-actions .text-button { min-height: 44px; padding: 8px 6px; gap: 6px; white-space: nowrap; }
+#app-screen .recipe-actions .hand-icon { width: 22px; height: 22px; }
+#app-screen #edit-mode-btn[class~='bg-red-500'] { color: var(--red); }
+
+/* Leave a visible scrollbar only on the recipe list. Other scrollable
+   areas remain accessible by wheel, touch and keyboard. */
+#app-screen .tag-list,
+#app-screen .cart-items,
+#app-screen .cart-popup { scrollbar-width: none; }
+#app-screen .tag-list::-webkit-scrollbar,
+#app-screen .cart-items::-webkit-scrollbar,
+#app-screen .cart-popup::-webkit-scrollbar { display: none; }
+#app-screen .right-sidebar { overflow: hidden; }
+
+#app-screen .cart-toggle { cursor: grab; user-select: none; -webkit-user-select: none; }
+#app-screen .cart-toggle img { pointer-events: none; -webkit-user-drag: none; }
+#app-screen .floating-pot.pot-dragging .cart-toggle { cursor: grabbing; }
+#app-screen .floating-pot.pot-dragging .pot-image { transform: rotate(-3deg); }
+#app-screen .cart-popup {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 14px);
+  width: min(330px, calc(100vw - 32px));
+  max-height: calc(100svh - 24px);
+  margin: 0;
+  overflow: auto;
+}
+
+@media (min-width: 601px) {
+  #app-screen { max-width: 1320px; padding-top: 0; }
+  #app-screen .book-body { grid-template-columns: 128px minmax(0, 1fr) 222px; }
+  #app-screen .categories { align-items: center; padding: 8px 180px 22px 138px; }
+  #app-screen .categories .category-btn { min-height: 84px; padding: 4px 8px; }
+  #app-screen .category-icon .hand-icon { width: clamp(56px, 5.5vw, 72px); height: clamp(56px, 5.5vw, 72px); }
+  #app-screen .recipe-content { padding-left: 38px; padding-right: 30px; }
+  #app-screen .recipe-list { padding-bottom: 30px; }
+  #app-screen .right-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    padding: 8px 12px 165px;
+  }
+  #app-screen .clipboard { width: 100%; max-width: 196px; height: 340px; min-height: 0; flex: 0 1 340px; aspect-ratio: auto; }
+  #app-screen .clipboard-art { border-image-width: 58px 11px 23px 11px; }
+  #app-screen .clipboard-menu { left: 11%; right: 10%; top: 20%; bottom: 8%; }
+  #app-screen .dimension-btn { min-height: 42px; padding: 7px 0 10px; font-size: 15px; }
+  #app-screen .menu-emoji.hand-icon { width: 26px; height: 26px; }
+  #app-screen .floating-pot { right: 34px; bottom: 24px; }
+  #app-screen .cart-toggle { width: 142px; }
+  #app-screen .pot-image { width: 122px; height: 122px; }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  #app-screen .app-header { padding-left: 24px; padding-right: 24px; }
+  #app-screen .recipe-actions { gap: 9px; }
+  #app-screen .recipe-actions .text-button { font-size: 12px; }
+  #app-screen .book-body { grid-template-columns: 88px minmax(0, 1fr) 168px; }
+  #app-screen .categories { padding-left: 90px; padding-right: 148px; }
+  #app-screen .categories .category-btn { min-height: 72px; min-width: 0; padding-left: 3px; padding-right: 3px; }
+  #app-screen .category-icon .hand-icon { width: 56px; height: 56px; }
+  #app-screen .recipe-content { padding-left: 25px; padding-right: 18px; }
+  #app-screen .right-sidebar { padding-left: 7px; padding-right: 7px; padding-bottom: 147px; }
+  #app-screen .dimension-btn { font-size: 13px; }
+  #app-screen .menu-emoji.hand-icon { width: 22px; height: 22px; }
+  #app-screen .floating-pot { right: 18px; bottom: 18px; }
+  #app-screen .cart-toggle { width: 132px; }
+  #app-screen .pot-image { width: 112px; height: 112px; }
+}
+
+@media (max-width: 600px) {
+  #app-screen .app-header { gap: 6px; padding-left: 13px; padding-right: 10px; }
+  #app-screen .app-header .brand { font-size: 19px; gap: 4px; }
+  #app-screen .recipe-actions { gap: 3px; }
+  #app-screen .recipe-actions .text-button { font-size: 10px; padding: 6px 3px; gap: 3px; }
+  #app-screen .recipe-actions .hand-icon { width: 16px; height: 16px; }
+  #app-screen .category-icon .hand-icon { width: 46px; height: 46px; }
+  #app-screen .categories .category-btn { min-height: 60px; }
+  #app-screen .right-sidebar { padding-bottom: 130px; margin-bottom: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app-screen .floating-pot.pot-dragging .pot-image { transform: none; }
+}

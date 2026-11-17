@@ -1,0 +1,203 @@
+/* All desktop artwork shares the original 2560 × 1440 canvas.
+   Cover the viewport with that canvas, then position controls in its coordinates.
+   Mobile continues to use styles.css and the original mobile assets. */
+.desktop-kitchen-layer,
+.desktop-pot-shadow { display: none; }
+
+@media (min-width: 601px) {
+  #home-screen {
+    position: relative;
+    isolation: isolate;
+    container-type: size;
+    width: 100%;
+    max-width: none;
+    height: 100svh;
+    min-height: 540px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #eff0e2;
+  }
+
+  #home-screen .home-content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100cqw, 177.777778cqh);
+    height: max(56.25cqw, 100cqh);
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    display: block;
+    flex: none;
+    container-type: inline-size;
+    transform: translate(-50%, -50%);
+    background: url('assets/desktop-background.jpg') center / 100% 100% no-repeat;
+  }
+
+  #home-screen .desktop-kitchen-layer {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  #home-screen .desktop-pot-shadow {
+    display: block;
+    position: absolute;
+    left: 60.15%;
+    top: 77.2%;
+    width: 13.5%;
+    height: 5.3%;
+    border-radius: 48% 45% 49% 46%;
+    background: #354d4a;
+    opacity: .13;
+    filter: blur(4px);
+    pointer-events: none;
+  }
+
+  #home-screen .home-header {
+    position: absolute;
+    top: max(24px, env(safe-area-inset-top));
+    left: max(4%, env(safe-area-inset-left));
+    right: max(4%, env(safe-area-inset-right));
+    z-index: 3;
+    gap: 12px;
+  }
+  #home-screen .brand { font-size: 26px; }
+  #home-screen .brand img { width: 32px; height: 32px; }
+  #home-screen .data-actions { gap: 10px; }
+  #home-screen .data-actions button { font-size: 13px; font-weight: 500; }
+  #home-screen .data-actions .paint-button:before { display: none; }
+
+  /* Visible note bounds: (639,216)–(1175,677), in the source canvas. */
+  #home-screen .recommendation {
+    position: absolute;
+    left: 24.960938%;
+    top: 15%;
+    width: 20.9375%;
+    height: 32.013889%;
+    min-height: 0;
+    padding: 1.8cqw 1.5cqw 1.2cqw;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 6px;
+    text-align: center;
+    background: none;
+    z-index: 2;
+  }
+  #home-screen .recommendation > .eyebrow,
+  #home-screen .recommend-ingredients,
+  #home-screen .add-recommended,
+  #home-screen .shuffle,
+  #home-screen .desktop-recommend-title { display: none; }
+  #home-screen .mobile-recommend-title { display: inline; }
+  #home-screen .recommendation h1 {
+    margin: 0;
+    font-size: clamp(16px, 1.4cqw, 28px);
+    line-height: 1.5;
+    font-weight: 500;
+    letter-spacing: .02em;
+    color: #79693e;
+  }
+  #home-screen .recommended-dish {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    margin: 0;
+    gap: 0;
+  }
+  #home-screen .recommended-dish:after { display: none; }
+  #home-screen #recommend-dish-name {
+    min-width: 0;
+    font-size: clamp(20px, 1.95cqw, 38px);
+    line-height: 1.45;
+    color: #453c2b;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  #home-screen .note-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    min-height: 44px;
+    width: 100%;
+  }
+  #home-screen .note-actions button {
+    display: grid;
+    place-items: center;
+    width: max(44px, 3.5cqw);
+    height: max(44px, 3.5cqw);
+    padding: 0;
+    background: transparent;
+    transition: transform .18s ease;
+  }
+  #home-screen .note-reject .hand-icon { width: clamp(32px, 2.8cqw, 56px); height: clamp(32px, 2.8cqw, 56px); }
+  #home-screen .note-accept img { width: clamp(38px, 3.3cqw, 66px); height: clamp(38px, 3.3cqw, 66px); object-fit: contain; }
+  #home-screen .note-actions button:hover { transform: scale(1.08) rotate(-4deg); }
+
+  /* 1080 × 996 animation placed at (1308,517), drawn at 810 × 747.
+     Its transparent margins put the visible feet on the hand-drawn stand. */
+  #home-screen .home-illustration {
+    position: absolute;
+    left: 51.09375%;
+    top: 35.902778%;
+    width: 31.640625%;
+    display: block;
+    z-index: 1;
+  }
+  #home-screen .home-pot {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-width: none;
+    aspect-ratio: 1080 / 996;
+    margin: 0;
+    padding: 0;
+    transition: transform .25s ease;
+  }
+  #home-screen .home-pot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: contain;
+    pointer-events: none;
+  }
+  #home-screen .home-pot:hover { transform: translateY(-2px); }
+  #home-screen .pot-caption {
+    margin: 0;
+    padding-top: 2px;
+    text-align: center;
+    font-size: clamp(11px, .85cqw, 16px);
+    line-height: 1.5;
+    color: #526f6c;
+  }
+  #home-screen .pot-caption span,
+  #home-screen .home-footer { display: none; }
+}
+
+/* Portrait tablets retain the same shared canvas with a smaller crop.
+   Extend the drawing's flat top/bottom colors instead of clipping the note. */
+@media (min-width: 601px) and (max-aspect-ratio: 1/1) {
+  #home-screen { background: linear-gradient(#eff0e2 0 50%, #d3d4aa 50% 100%); }
+  #home-screen .home-content {
+    width: 118.518519cqw;
+    height: 66.666667cqw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #home-screen .home-pot,
+  #home-screen .note-actions button { transition: none; }
+}

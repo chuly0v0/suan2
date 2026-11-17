@@ -1,12 +1,57 @@
 # 蒜了 2.0
 
-一本简约手绘风的家常菜谱。静态 HTML / CSS / JavaScript，可直接部署到 GitHub Pages。包含手机厨房首页、便利贴红叉重选与绿钩加菜、自绘图标、联动筛选、砂锅选菜、菜品管理和 CSV / Excel 导入导出。
+一本手绘风格的家常菜谱。电脑版、平板版和手机版已整理在本目录，可直接双击 index.html 预览，或完整部署到 GitHub Pages，无需安装依赖。
 
-## 上传与发布
+## 本版界面
 
-把本目录内全部文件和 assets 文件夹上传到 GitHub 仓库根目录，保留文件层级；不要再套一层“蒜了2.0”。本版共97个文件，根目录必须有 index.html、styles.css、schema.js、icons.js、storage.js、app.js、offline.js、sw.js 和 .nojekyll。
+电脑和平板使用分层手绘厨房首页：背景、便利贴、砂锅架和动态企鹅砂锅同步缩放。16:9 完整展示、3:2 居中裁切；手机保留原厨房首页。
 
-Settings → Pages：Source 选 Deploy from a branch，Branch 选 main，Folder 选 / (root)。无需安装依赖。上传包中的缓存版本已生成，可以直接上传。
+菜谱页保留左侧具体筛选、中间单列菜谱、右侧手绘夹板的结构。夹板适当缩小，只保留四项筛选；只有菜谱区显示滚动条。顶部食材图标放大，增加菜品、导出菜谱、编辑菜品在右上角横向排列，移除回到顶部按钮。
+
+右下角砂锅支持按住鼠标拖动，松手不会误触打开。单击、键盘 Enter 和手机触摸仍可查看砂锅。拖动和弹窗会限制在页面范围内，窗口缩小时自动调整；刷新后回到默认位置。
+
+## 上传到 GitHub
+
+上传本目录里面的文件和 assets 文件夹，放在现有仓库的网页根目录，保留文件层级；不要在仓库根目录再套一层“蒜了2.0”。整个目录共 105 个文件，没有依赖副本目录或本机其他素材路径。
+
+如果仓库目前还是这次合并前的版本，只需上传以下 10 个文件，其他文件保留：
+
+```text
+index.html
+desktop-home.css
+desktop-recipes.css
+desktop-recipes.js
+sw.js
+README.md
+assets/desktop-background.jpg
+assets/desktop-note.png
+assets/desktop-pot-stand.png
+assets/desktop-penguin-pot.gif
+```
+
+前 6 个放在仓库根目录，后 4 个放进仓库已有的 assets 目录。请将 index.html、样式、脚本、图片及 sw.js 一起提交，避免页面引用尚未上传的资源。
+
+第一次部署或不确定仓库版本时，上传整个目录的内容。根目录应包含：
+
+```text
+assets/
+.nojekyll
+index.html
+styles.css
+desktop-home.css
+desktop-recipes.css
+desktop-recipes.js
+schema.js
+storage.js
+icons.js
+app.js
+offline.js
+sw.js
+update.html
+README.md
+```
+
+本次已更新 sw.js，可直接上传。源码副本、outputs 检查结果、合并前备份、手绘原件以及“发布工具”都不需要上传。
 
 ## 缓存与离线
 
@@ -14,7 +59,7 @@ Settings → Pages：Source 选 Deploy from a branch，Branch 选 main，Folder 
 
 离线缓存需要 HTTPS（本机 localhost 也可以），直接双击 index.html 的 file:// 预览无法启用。首次下载尚未完成时，不能保证离线使用。
 
-新版本下载完成后会提示“有新版可用”，点击“更新页面”再切换，避免打断正在填写的菜品。若开了多个蒜了标签页，请关闭其他标签页后再点更新。
+新版本下载完成后会提示“有新版可用”，点击“更新页面”再切换，避免打断正在填写的菜品。同时打开多个标签页也可以更新；只刷新主动点击更新的页面，其他页面保留未保存内容并可稍后更新。
 
 ## 数据保留
 
@@ -38,6 +83,10 @@ Settings → Pages：Source 选 Deploy from a branch，Branch 选 main，Folder 
 
 ## 新分类与旧数据迁移
 
-食材分为禽类、猪、牛羊、水产、蛋豆、蔬菜、干货；可多选，用顿号分隔。鸡鸭鹅鸽合并禽类，蛋类单独归蛋豆；混合菜在各相关分类均可找到。烹饪方式增加“其它”；方便程度1星最省事，快手菜筛选1星。开胃填是或否，不再填写其他口味。
+食材分为禽类、猪、牛羊、水产、蛋豆、蔬菜、干货；可多选，用顿号分隔。鸡鸭鹅鸽合并禽类，蛋类单独归蛋豆；混合菜在各相关分类均可找到。烹饪方式保留炒、蒸、煎、焗、炖、白灼、其它；上汤归入其它并保留原菜名。方便程度1星最省事，快手菜筛选1星。开胃填是或否，不再填写其他口味。
 
 旧浏览器菜谱迁移前会保留一份原数据到 garlic_recipes_schema1_backup，原砂锅不变。原难度星级仅作为方便程度初值，建议按自己的备料、操作及清洗负担复核。导入表格会校验新字段，无效时保留原菜谱。网页的“更新数据”仍然替换整份数据，追加前先导出完整表。
+
+## 旧版更新提示卡住时
+
+在原网页地址的目录后打开 update.html，点击“更新并打开菜谱”。该入口会检查并启用新缓存，不清除本地菜谱或砂锅。无需清除站点数据。
