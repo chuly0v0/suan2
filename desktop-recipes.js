@@ -1,6 +1,18 @@
 // Mouse dragging is separate from the existing click / keyboard cart action.
 (() => {
   const app = document.getElementById('app-screen');
+  const actions = app.querySelector('.recipe-actions');
+  const desktopSlot = document.createComment('Desktop recipe actions');
+  actions.before(desktopSlot);
+  const mobileSlot = app.querySelector('.mobile-actions-slot');
+  const desktopLayout = matchMedia('(min-width: 601px)');
+  function placeActions() {
+    if (desktopLayout.matches) desktopSlot.after(actions);
+    else mobileSlot.append(actions);
+  }
+  desktopLayout.addEventListener('change', placeActions);
+  placeActions();
+
   const host = app.querySelector('.floating-pot');
   const button = host.querySelector('.cart-toggle');
   const popup = document.getElementById('cart-popup');
